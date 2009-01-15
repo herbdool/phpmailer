@@ -1,0 +1,10 @@
+// $Id$
+
+PHPMailer x.x-x.x, xxxx-xx-xx
+-----------------------------
+
+
+PHPMailer 5.x-1.x, xxxx-xx-xx
+-----------------------------
+Initial commit of PHPMailer integration module for Drupal.
+

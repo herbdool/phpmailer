@@ -1,0 +1,4 @@
+; $Id$
+name = PHPMailer
+description = Integrates PHPMailer with Drupal.
+package = Mail
