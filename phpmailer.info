@@ -1,5 +1,5 @@
 ; $Id$
 name = PHPMailer
-description[] = Integrates PHPMailer with Drupal.
+description = Integrates PHPMailer with Drupal.
 package = Mail
 core = 6.x

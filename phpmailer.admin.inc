@@ -37,9 +37,9 @@ function phpmailer_settings_form() {
   // @todo Debug effects of enabling mimemail_alter (also above).
   $form['enable']['smtp_on'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Use PHPMailer for all messages'),
+    '#title' => t('Use PHPMailer for sending e-mails'),
     '#default_value' => variable_get('smtp_on', 0),
-    '#description' => t('Use the PHPMailer library to deliver all site messages.  Remember to disable this setting here prior to uninstalling the module.'),
+    '#description' => t('Remember to disable this setting first prior to uninstalling the module.'),
     '#disabled' => (bool)variable_get('mimemail_alter', 0));
 
   $form['server'] = array(
