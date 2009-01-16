@@ -20,9 +20,9 @@ To submit bug reports and feature suggestions, or to track changes:
 
 -- INSTALLATION --
 
-* Download the PHPMailer library 1.x from
+* Download PHPMailer 2.x from
 
-    http://sourceforge.net/project/showfiles.php?group_id=26031&package_id=17494
+    http://sourceforge.net/project/showfiles.php?group_id=26031&package_id=252700
 
   and copy the files
 
@@ -54,7 +54,6 @@ Current maintainers:
 Credits:
 * PHPMailer module: Stefan Kudwien (smk) - http://drupal.org/user/48898
 * PHPMailer class: Brent R. Matzelle - http://phpmailer.sourceforge.net
-* SMTP Authentication Support: Luke Last - http://drupal.org/project/smtp
 
 This project has been sponsored by:
 * UNLEASHED MIND

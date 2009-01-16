@@ -4,7 +4,7 @@ PHPMailer x.x-x.x, xxxx-xx-xx
 -----------------------------
 
 
-PHPMailer 5.x-1.x, xxxx-xx-xx
+PHPMailer 6.x-2.x, xxxx-xx-xx
 -----------------------------
-Initial commit of PHPMailer integration module for Drupal.
+Complete rewrite for PHPMailer 2.x.
 

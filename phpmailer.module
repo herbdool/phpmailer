@@ -17,41 +17,28 @@ function phpmailer_perm() {
 /**
  * Implementation of hook_menu().
  */
-function phpmailer_menu($may_cache) {
+function phpmailer_menu() {
   $items = array();
-  if ($may_cache && !module_exists('mimemail')) {
-    $items[] = array(
-      'path' => 'admin/settings/phpmailer',
-      'title' => t('Mail'),
-      'description' => t('Configure PHPMailer e-mail settings.'),
-      'callback' => 'drupal_get_form',
-      'callback arguments' => 'phpmailer_settings_form',
-      'access' => user_access('administer phpmailer settings'),
-    );
-  }
+
+  $items['admin/settings/phpmailer'] = array(
+    'title' => 'Mail',
+    'description' => 'Configure PHPMailer settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('phpmailer_settings'),
+    'access callback' => 'phpmailer_settings_access',
+    'file' => 'phpmailer.admin.inc',
+  );
+
   return $items;
 }
 
 if (strpos(variable_get('smtp_library', ''), 'phpmailer') && !function_exists('drupal_mail_wrapper')) {
   /**
    * Implementation of drupal_mail_wrapper().
-   *
-   * @param $mailkey
-   *   A key to identify the mail sent, for altering.
-   * @param $to
-   *   E-mail address to send to.
-   * @param $subject
-   *   Subject of e-mail.
-   * @param $body
-   *   Message body.
-   * @param $from
-   *   E-mail address of sender.
-   * @param $header
-   *   Array of additional header lines.
    */
-  function drupal_mail_wrapper($mailkey, $to, $subject, $body, $from, $header) {
-    include_once(drupal_get_path('module', 'phpmailer') .'/includes/phpmailer.inc');
-    return phpmailer_send((array)$to, $subject, $body, $from, $header);
+  function drupal_mail_wrapper($message) {
+    module_load_include('inc', 'phpmailer', 'includes/phpmailer.drupal');
+    return phpmailer_send($message);
   }
 }
 
@@ -59,58 +46,62 @@ if (strpos(variable_get('smtp_library', ''), 'phpmailer') && !function_exists('d
  * Implementation of hook_mailengine().
  */
 function phpmailer_mailengine($op, $message = array()) {
+
   switch ($op) {
     case 'name':
       return t('PHPMailer');
 
     case 'description':
-      return t('Mailing engine using PHPMailer.');
+      return t('Mailing engine using the PHPMailer library.');
 
     case 'settings':
-      require_once drupal_get_path('module', 'phpmailer') .'/phpmailer.admin.inc';
-      return _phpmailer_settings_form();
+      module_load_include('inc', 'phpmailer', 'phpmailer.admin');
+      return phpmailer_settings_form();
 
     case 'multiple':
     case 'single':
     case 'send':
-      include_once(drupal_get_path('module', 'phpmailer') .'/includes/mimemail.inc');
-
-      $defaults = array(
-        'address' => '',
-        'subject' => '',
-        'body' => '',
-        'sender' => '',
-        'headers' => array()
-      );
-      $message = array_merge($defaults, $message);
-      settype($message['address'], 'array');
-
-      $status = mimemail_phpmailer_send(
-        $message['address'],
-        $message['subject'],
-        $message['body'],
-        $message['sender'],
-        $message['headers']
-      );
-      return $status;
+      module_load_include('inc', 'phpmailer', 'includes/phpmailer.mimemail');
+      return mimemail_phpmailer_send($message);
   }
-  return FALSE;
-}
-
-function phpmailer_parse_address($address) {
-  $regexp = "/^(.*) <([a-z0-9]+([_\\.-][a-z0-9]+)*@([a-z0-9]+([\.-][a-z0-9]+)*)+\\.[a-z]{2,})>$/i";
-  if (preg_match($regexp, $address, $matches)) {
-    return array('name' => trim($matches[1], '"'), 'address' => $matches[2]);
-  }
-  return FALSE;
 }
 
 /**
- * Menu callback; Form builder for the module's settings page.
+ * Extract address and optional display name of an e-mail address.
+ *
+ * @param $address
+ *   A string containing one or more valid e-mail address(es) separated with
+ *   commas.
+ * @return
+ *   An array containing all found e-mail addresses split into mail and name.
+ *
+ * @see http://tools.ietf.org/html/rfc5322#section-3.4
  */
-function phpmailer_settings_form() {
-  require_once drupal_get_path('module', 'phpmailer') .'/phpmailer.admin.inc';
-  $form = _phpmailer_settings_form();
-  return system_settings_form($form);
+function phpmailer_parse_address($address) {
+  $parsed = array();
+  $regexp = "/^(.*) <([a-z0-9]+(?:[_\\.-][a-z0-9]+)*@(?:[a-z0-9]+(?:[\.-][a-z0-9]+)*)+\\.[a-z]{2,})>$/i";
+
+  // Split multiple addresses and process each.
+  foreach (explode(',', $address) as $email) {
+    $email = trim($email);
+    if (preg_match($regexp, $email, $matches)) {
+      $parsed[] = array('mail' => $matches[2], 'name' => trim($matches[1], '"'));
+    }
+    else {
+      $parsed[] = array('mail' => $email, 'name' => '');
+    }
+  }
+  return $parsed;
+}
+
+/**
+ * Block access to settings page if Mime Mail module is enabled.
+ */
+function phpmailer_settings_access() {
+  // @todo Ony when global MM support is enabled?
+  if (!module_exists('mimemail')) {
+    return user_access('administer phpmailer settings');
+  }
+  return FALSE;
 }
 
