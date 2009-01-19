@@ -9,7 +9,7 @@
 module_load_include('inc', 'phpmailer', 'includes/phpmailer.class');
 
 /**
- * Sends out the email.
+ * Send out an e-mail.
  *
  * @param $message
  *   Message array structure.
@@ -22,8 +22,8 @@ function phpmailer_send($message) {
   }
 
   // Parse 'From' e-mail address.
-  $address = phpmailer_parse_address($message['from']);
-  $mail->From = $address[0]['mail'];
+  $address        = phpmailer_parse_address($message['from']);
+  $mail->From     = $address[0]['mail'];
   $mail->FromName = $address[0]['name'];
   unset($message['headers']['From']);
 
@@ -52,7 +52,7 @@ function phpmailer_send($message) {
         $mail->CharSet = trim($param[1]);
       }
       else {
-        $mail->ContentType .= '; '. $key .'='. trim($param[1]);
+        $mail->ContentType .= '; ' . $key . '=' . trim($param[1]);
       }
     }
     unset($message['headers']['Content-Type']);
@@ -86,7 +86,7 @@ function phpmailer_send($message) {
     $mail->AddCustomHeader("$key:$value");
   }
 
-  // Replace recipient if set.
+  // Check if debugging is turned on and replace recipient.
   if (variable_get('phpmailer_debug_email', '')) {
     $message['to'] = variable_get('phpmailer_debug_email', '');
   }

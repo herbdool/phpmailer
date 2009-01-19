@@ -7,19 +7,10 @@
  */
 
 /**
- * Menu callback to render the settings page.
- */
-function phpmailer_settings() {
-  $form = phpmailer_settings_form();
-  return system_settings_form($form);
-}
-
-/**
- * Generate the settings form for both the Mime Mail settings page as well as
- * the menu callback function.
+ * Form builder for both the Mime Mail hook and our own menu callback.
  */
 function phpmailer_settings_form() {
-  // Override the smtp_library variable.
+  // Override the 'smtp_library' variable.
   if (variable_get('smtp_on', 0)) {
     if (!strpos(variable_get('smtp_library', ''), 'phpmailer')) {
       variable_set('smtp_library', drupal_get_filename('module', 'phpmailer'));
@@ -33,29 +24,34 @@ function phpmailer_settings_form() {
 
   $form['enable'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Install options'));
+    '#title' => t('Install options'),
+  );
   // @todo Debug effects of enabling mimemail_alter (also above).
   $form['enable']['smtp_on'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use PHPMailer for sending e-mails'),
     '#default_value' => variable_get('smtp_on', 0),
     '#description' => t('Remember to disable this setting first prior to uninstalling the module.'),
-    '#disabled' => (bool)variable_get('mimemail_alter', 0));
+    '#disabled' => (bool)variable_get('mimemail_alter', 0),
+  );
 
   $form['server'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Server settings'));
+    '#title' => t('Server settings'),
+  );
   $form['server']['smtp_host'] = array(
     '#type' => 'textfield',
     '#title' => t('Primary SMTP server'),
     '#default_value' => variable_get('smtp_host', 'localhost'),
     '#description' => t('The host name or IP address of your primary SMTP server.  Often just %localhost.', array('%localhost' => 'localhost')),
-    '#required' => TRUE);
+    '#required' => TRUE,
+  );
   $form['server']['smtp_hostbackup'] = array(
     '#type' => 'textfield',
     '#title' => t('Backup SMTP server'),
     '#default_value' => variable_get('smtp_hostbackup', ''),
-    '#description' => t("The host name or IP address of your backup server, used when the primary server refuses connections.  Optional."));
+    '#description' => t("The host name or IP address of your backup server, used when the primary server refuses connections.  Optional."),
+  );
   $form['server']['smtp_port'] = array(
     '#type' => 'textfield',
     '#title' => t('Default SMTP port'),
@@ -63,17 +59,19 @@ function phpmailer_settings_form() {
     '#maxlength' => 5,
     '#default_value' => variable_get('smtp_port', '25'),
     '#description' => t('The standard SMTP port is 25, for GMail enter 465 here and set the protocol to <em>TLS</em> below.  You can override the default port by appending it to the host name separated with a colon.  Example: %hostname', array('%hostname' => 'localhost:465')),
-    '#required' => TRUE);
+    '#required' => TRUE,
+  );
   $form['server']['smtp_protocol'] = array(
     '#type' => 'select',
     '#title' => t('Secure protocol'),
     '#default_value' => variable_get('smtp_protocol', ''),
     '#options' => array('' => t('No'), 'ssl' => t('SSL'), 'tls' => t('TLS')),
-    '#description' => t('Whether to use an encrypted connection when communicating with the mail server.'));
+    '#description' => t('Whether to use an encrypted connection when communicating with the mail server.'),
+  );
   if (!function_exists('openssl_open')) {
     $form['server']['smtp_protocol']['#default_value'] = '';
     $form['server']['smtp_protocol']['#disabled'] = TRUE;
-    $form['server']['smtp_protocol']['#description'] .= ' '. t("Note: This option has been disabled since your PHP installation doesn't seem to have support for OpenSSL.");
+    $form['server']['smtp_protocol']['#description'] .= ' ' . t("Note: This option has been disabled since your PHP installation doesn't seem to have support for OpenSSL.");
     variable_set('smtp_protocol', '');
   }
 
@@ -81,41 +79,48 @@ function phpmailer_settings_form() {
     '#type' => 'textfield',
     '#title' => t('"From" name'),
     '#default_value' => variable_get('smtp_fromname', ''),
-    '#description' => t('Enter a name that should appear as the sender for all messages.  If left blank the site name will be used instead: %sitename.', array('%sitename' => variable_get('site_name', 'Drupal'))));
+    '#description' => t('Enter a name that should appear as the sender for all messages.  If left blank the site name will be used instead: %sitename.', array('%sitename' => variable_get('site_name', 'Drupal'))),
+  );
 
   $form['auth'] = array(
     '#type' => 'fieldset',
     '#title' => t('SMTP authentication'),
     '#description' => t('Leave blank if your SMTP server does not require authentication.'),
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE);
+    '#collapsed' => TRUE,
+  );
   $form['auth']['smtp_username'] = array(
     '#type' => 'textfield',
     '#title' => t('Username'),
     '#default_value' => variable_get('smtp_username', ''),
-    '#description' => t('For GMail, enter your username including "@gmail.com"'));
+    '#description' => t('For GMail, enter your username including "@gmail.com"'),
+  );
   $form['auth']['smtp_password'] = array(
     '#type' => 'textfield',
     '#title' => t('Password'),
-    '#default_value' => variable_get('smtp_password', ''));
+    '#default_value' => variable_get('smtp_password', ''),
+  );
 
   $form['advanced'] = array(
     '#type' => 'fieldset',
     '#title' => t('Advanced SMTP settings'),
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE);
+    '#collapsed' => TRUE,
+  );
   $form['advanced']['smtp_keepalive'] = array(
     '#type' => 'checkbox',
     '#title' => t('Keep connection alive'),
     '#default_value' => variable_get('smtp_keepalive', 0),
-    '#description' => t('Whether to reuse an existing connection until the request ends.  Can improve performance when sending lots of e-mails at once.'));
+    '#description' => t('Whether to reuse an existing connection until the request ends.  Can improve performance when sending lots of e-mails at once.'),
+  );
   // @todo Capture output during send and put in a message.
   $form['advanced']['smtp_debug'] = array(
     '#type' => 'select',
     '#title' => t('Debug level'),
     '#default_value' => variable_get('smtp_debug', 0),
     '#options' => array(0 => t('Disabled'), 1 => t('Errors only'), 2 => t('Server responses'), 4 => t('Complete communication')),
-    '#description' => t("Debug the communication with the SMTP server.  You normally shouldn't enable this unless you're seriously trying to debug e-mail sending problems."));
+    '#description' => t("Debug the communication with the SMTP server.  You normally shouldn't enable this unless you're seriously trying to debug e-mail sending problems."),
+  );
 
   // If an address was given, send a test email message.
   $test_address = variable_get('smtp_test_address', '');
@@ -129,12 +134,14 @@ function phpmailer_settings_form() {
     '#type' => 'fieldset',
     '#title' => t('Test configuration'),
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE);
+    '#collapsed' => TRUE,
+  );
   $form['test']['smtp_test_address'] = array(
     '#type' => 'textfield',
     '#title' => t('Recipient'),
     '#default_value' => '',
-    '#description' => t('Type in an address to have a test e-mail sent there.'));
+    '#description' => t('Type in an address to have a test e-mail sent there.'),
+  );
 
   return $form;
 }

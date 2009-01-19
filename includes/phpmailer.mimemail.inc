@@ -3,13 +3,13 @@
 
 /**
  * @file
- * Implements PHPMailer support on behalf of the Mime Mail module.
+ * Implements PHPMailer support on behalf of Mime Mail module.
  */
 
 module_load_include('inc', 'phpmailer', 'includes/phpmailer.class');
 
 /**
- * Sends out the email.
+ * Send out an e-mail.
  *
  * @param $message
  *   Message array structure.
@@ -23,9 +23,12 @@ function mimemail_phpmailer_send($message) {
 
   // Extract and assign e-mail addresses required for SMTP.
   // Display names are not required. Leave header intact.
+
+  // Parse 'From' e-mail address.
   $address = phpmailer_parse_address($message['sender']);
   $mail->From = $address[0]['mail'];
 
+  // Extract CCs and BCCs from headers.
   if (isset($message['headers']['CC'])) {
     foreach (phpmailer_parse_address($message['headers']['CC']) as $address) {
       $mail->AddCC($address['mail']);
@@ -37,7 +40,7 @@ function mimemail_phpmailer_send($message) {
     }
   }
 
-  // Replace recipient if set.
+  // Check if debugging is turned on and replace recipient.
   if (variable_get('phpmailer_debug_email', '')) {
     $message['address'] = variable_get('phpmailer_debug_email', '');
   }

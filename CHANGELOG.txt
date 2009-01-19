@@ -6,5 +6,12 @@ PHPMailer x.x-x.x, xxxx-xx-xx
 
 PHPMailer 6.x-2.x, xxxx-xx-xx
 -----------------------------
-Complete rewrite for PHPMailer 2.x.
+by sun: Code clean-up and sync between 5.x-2.x and 6.x-2.x.
+by smk-ka: Complete rewrite for PHPMailer 2.x.
+
+
+PHPMailer 5.x-1.0, 2009-01-15
+-----------------------------
+Initial release of PHPMailer integration module for Drupal.
+
 

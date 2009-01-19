@@ -13,7 +13,6 @@ module_load_include('php', 'phpmailer', 'phpmailer/class.phpmailer');
  * and setting a custom Return-Path.
  */
 class DrupalPHPMailer extends PHPMailer {
-
   /**
    * Stores the Return-Path, which can be different from Sender.
    */
@@ -28,7 +27,7 @@ class DrupalPHPMailer extends PHPMailer {
 
     $this->Host = variable_get('smtp_host', '');
     if ($backup = variable_get('smtp_hostbackup', '')) {
-       $this->Host .= ';'. $backup;
+      $this->Host .= ';' . $backup;
     }
     $this->Port = variable_get('smtp_port', '25');
     $this->SMTPSecure = variable_get('smtp_protocol', '');
@@ -42,7 +41,7 @@ class DrupalPHPMailer extends PHPMailer {
     $this->SMTPDebug = variable_get('smtp_debug', 0);
 
     // Adjust path to SMTP class.
-    $this->PluginDir = drupal_get_path('module', 'phpmailer') .'/phpmailer/';
+    $this->PluginDir = drupal_get_path('module', 'phpmailer') . '/phpmailer/';
   }
 
   /**
@@ -53,11 +52,11 @@ class DrupalPHPMailer extends PHPMailer {
     $this->ClearAttachments();
     $this->ClearCustomHeaders();
 
-    $this->Priority = 3;
-    $this->CharSet = variable_get('smtp_charset', 'utf-8');
+    $this->Priority    = 3;
+    $this->CharSet     = variable_get('smtp_charset', 'utf-8');
     $this->ContentType = 'text/plain';
-    $this->Encoding = '8bit';
-    $this->ErrorInfo = '';
+    $this->Encoding    = '8bit';
+    $this->ErrorInfo   = '';
 
     // Set default From name.
     $from_name = variable_get('smtp_fromname', '');
@@ -65,9 +64,9 @@ class DrupalPHPMailer extends PHPMailer {
       // Fall back on the site name.
       $from_name = variable_get('site_name', 'Drupal');
     }
-    $this->FromName = $from_name;
-    $this->Sender = '';
-    $this->MessageID = '';
+    $this->FromName   = $from_name;
+    $this->Sender     = '';
+    $this->MessageID  = '';
     $this->ReturnPath = '';
   }
 
