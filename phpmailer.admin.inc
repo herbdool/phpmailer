@@ -143,7 +143,7 @@ function phpmailer_settings_form() {
     '#description' => t('Type in an address to have a test e-mail sent there.'),
   );
 
-  return $form;
+  return system_settings_form($form);
 }
 
 /**
