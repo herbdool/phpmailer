@@ -107,10 +107,8 @@ function phpmailer_send($message) {
     watchdog('phpmailer', $mail->ErrorInfo, NULL, WATCHDOG_ERROR);
   }
 
-  // Reset object properties when keep-alive is enabled.
-  if ($mail->SMTPKeepAlive) {
-    $mail->Reset();
-  }
+  // Reset object properties.
+  $mail->Reset();
 
   if ($mail->SMTPDebug) {
     if ($debug = ob_get_contents()) {

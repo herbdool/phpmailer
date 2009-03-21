@@ -6,6 +6,7 @@ PHPMailer x.x-x.x, xxxx-xx-xx
 
 PHPMailer 6.x-2.x, xxxx-xx-xx
 -----------------------------
+#375422 by recidive: Fixed mails are sent to multiple recipients.
 by sun: Fixed missing system_settings_form() due to clean-up commit.
 by sun: Code clean-up and sync between 5.x-2.x and 6.x-2.x.
 by smk-ka: Complete rewrite for PHPMailer 2.x.
