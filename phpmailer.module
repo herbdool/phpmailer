@@ -19,14 +19,34 @@ function phpmailer_perm() {
  */
 function phpmailer_menu() {
   $items['admin/settings/phpmailer'] = array(
-    'title' => 'Mail',
+    'title' => 'PHPMailer',
     'description' => 'Configure PHPMailer settings.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('phpmailer_settings_form'),
     'access callback' => 'phpmailer_settings_access',
     'file' => 'phpmailer.admin.inc',
   );
+  $items['phpmailer/preview'] = array(
+    'title' => 'Mail preview',
+    'page callback' => 'phpmailer_preview',
+    'access callback' => 'phpmailer_preview_access',
+    'type' => MENU_CALLBACK,
+  );
   return $items;
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function phpmailer_form_alter(&$form, &$form_state, $form_id) {
+  // Hide the mimemail global enabler setting if phpmailer is used to deliver
+  // all e-mails (they can't be both active).
+  if ($form_id == 'mimemail_settings' && strpos(variable_get('smtp_library', ''), 'phpmailer')) {
+    $form['mimemail']['mimemail_alter'] = array(
+      '#type' => 'value',
+      '#value' => 0,
+    );
+  }
 }
 
 if (strpos(variable_get('smtp_library', ''), 'phpmailer') && !function_exists('drupal_mail_wrapper')) {
@@ -95,10 +115,59 @@ function phpmailer_parse_address($address) {
  * Block access to settings page if Mime Mail module is enabled.
  */
 function phpmailer_settings_access() {
-  // @todo Ony when global MM support is enabled?
   if (!module_exists('mimemail')) {
     return user_access('administer phpmailer settings');
   }
   return FALSE;
+}
+
+/**
+ * Menu access callback; Determine access for HTML mail preview page.
+ */
+function phpmailer_preview_access() {
+  if (!strpos(variable_get('smtp_library', ''), 'phpmailer') && module_exists('mimemail') && variable_get('mimemail_alter', 0)) {
+    return user_access('administer phpmailer settings');
+  }
+  return FALSE;
+}
+
+/**
+ * Menu callback; Render a HTML mail as preview in the browser.
+ *
+ * @todo Not ported to 6.x yet.
+ */
+function phpmailer_preview() {
+  global $user, $base_url;
+
+  if (!module_exists('mimemail')) {
+    drupal_not_found();
+    exit;
+  }
+
+  $mailkey = 'phpmailer-test';
+  // Use example address to prevent usage of configurable mail format setting.
+  $recipient = 'test@example.com';
+  // @see user_register_submit()
+  $variables = array(
+    '!username' => $user->name,
+    '!site' => variable_get('site_name', 'Drupal'),
+    '!password' => 'test',
+    '!uri' => $base_url,
+    '!uri_brief' => substr($base_url, strlen('http://')),
+    '!mailto' => $user->mail,
+    '!date' => format_date(time()),
+    '!login_uri' => url('user', NULL, NULL, TRUE),
+    '!edit_uri' => url('user/'. $user->uid .'/edit', NULL, NULL, TRUE),
+    '!login_url' => user_pass_reset_url($user),
+  );
+  $subject = _user_mail_text('welcome_subject', $variables);
+  $body = _user_mail_text('welcome_body', $variables);
+  $sender = NULL;
+  $headers = array();
+
+  mimemail_mail_alter($mailkey, $recipient, $subject, $body, $sender, $headers);
+
+  print theme('mimemail_message', $body, $mailkey);
+  exit;
 }
 

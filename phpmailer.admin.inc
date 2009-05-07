@@ -11,34 +11,33 @@
  */
 function phpmailer_settings_form() {
   // Override the 'smtp_library' variable.
+  $smtp_library = variable_get('smtp_library', '');
   if (variable_get('smtp_on', 0)) {
-    if (!strpos(variable_get('smtp_library', ''), 'phpmailer')) {
+    if (!strpos($smtp_library, 'phpmailer')) {
       variable_set('smtp_library', drupal_get_filename('module', 'phpmailer'));
     }
   }
   else {
-    if (strpos(variable_get('smtp_library', ''), 'phpmailer')) {
+    if (strpos($smtp_library, 'phpmailer')) {
       variable_del('smtp_library');
     }
   }
 
-  $form['enable'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Install options'),
-  );
-  // @todo Debug effects of enabling mimemail_alter (also above).
-  $form['enable']['smtp_on'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Use PHPMailer for sending e-mails'),
-    '#default_value' => variable_get('smtp_on', 0),
-    '#description' => t('Remember to disable this setting first prior to uninstalling the module.'),
-    '#disabled' => (bool)variable_get('mimemail_alter', 0),
-  );
+  if (!variable_get('mimemail_alter', 0)) {
+    $form['smtp_on'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use PHPMailer for sending all e-mails'),
+      '#default_value' => variable_get('smtp_on', 0),
+      '#description' => t('Use the PHPMailer module to deliver all site messages.'),
+    );
+  }
+  else {
+    $form['smtp_on'] = array(
+      '#type' => 'value',
+      '#value' => 0,
+    );
+  }
 
-  $form['server'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Server settings'),
-  );
   $form['server']['smtp_host'] = array(
     '#type' => 'textfield',
     '#title' => t('Primary SMTP server'),
@@ -142,8 +141,18 @@ function phpmailer_settings_form() {
     '#default_value' => '',
     '#description' => t('Type in an address to have a test e-mail sent there.'),
   );
+  if (!strpos(variable_get('smtp_library', ''), 'phpmailer') && module_exists('mimemail') && variable_get('mimemail_alter', 0)) {
+    $form['test']['preview'] = array(
+      '#type' => 'item',
+      '#title' => t('Preview'),
+      '#value' => t('For theming of HTML mails sent via Mime Mail, you can <a href="@preview-url" target="_blank">preview an example mail</a>.', array('@preview-url' => url('phpmailer/preview'))),
+    );
+  }
 
-  return system_settings_form($form);
+  if (!module_exists('mimemail')) {
+    return system_settings_form($form);
+  }
+  return $form;
 }
 
 /**

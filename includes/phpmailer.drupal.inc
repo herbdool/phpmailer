@@ -27,19 +27,28 @@ function phpmailer_send($message) {
   $mail->FromName = $address[0]['name'];
   unset($message['headers']['From']);
 
-  // Extract CCs and BCCs from headers.
-  if (isset($message['headers']['CC'])) {
-    foreach (phpmailer_parse_address($message['headers']['CC']) as $address) {
-      $mail->AddCC($address['mail'], $address['name']);
+  if (variable_get('phpmailer_debug_email', '') === '') {
+    // Set recipients.
+    foreach (phpmailer_parse_address($message['to']) as $address) {
+      $mail->AddAddress($address['mail'], $address['name']);
     }
-    unset($message['headers']['CC']);
-  }
-  if (isset($message['headers']['BCC'])) {
-    foreach (phpmailer_parse_address($message['headers']['BCC']) as $address) {
-      $mail->AddBCC($address['mail'], $address['name']);
+    // Extract CCs and BCCs from headers.
+    if (isset($message['headers']['CC'])) {
+      foreach (phpmailer_parse_address($message['headers']['CC']) as $address) {
+        $mail->AddCC($address['mail'], $address['name']);
+      }
     }
-    unset($message['headers']['BCC']);
+    if (isset($message['headers']['BCC'])) {
+      foreach (phpmailer_parse_address($message['headers']['BCC']) as $address) {
+        $mail->AddBCC($address['mail'], $address['name']);
+      }
+    }
   }
+  else {
+    // Reroute to debug e-mail address.
+    $mail->AddAddress(variable_get('phpmailer_debug_email', ''));
+  }
+  unset($message['headers']['CC'], $message['headers']['BCC']);
 
   // Extract Content-Type and charset.
   if (isset($message['headers']['Content-Type'])) {
@@ -84,16 +93,6 @@ function phpmailer_send($message) {
   // @see PHPMailer::SecureHeader()
   foreach ($message['headers'] as $key => $value) {
     $mail->AddCustomHeader("$key:$value");
-  }
-
-  // Check if debugging is turned on and replace recipient.
-  if (variable_get('phpmailer_debug_email', '')) {
-    $message['to'] = variable_get('phpmailer_debug_email', '');
-  }
-
-  // Set recipients.
-  foreach (phpmailer_parse_address($message['to']) as $address) {
-    $mail->AddAddress($address['mail'], $address['name']);
   }
 
   $mail->Subject = $message['subject'];
