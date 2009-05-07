@@ -101,7 +101,7 @@ class DrupalPHPMailer extends PHPMailer {
     $PHPMAILER_LANG['encoding']             = 'Unknown encoding: ';
     $PHPMAILER_LANG['signing']              = 'Signing Error: ';
     $this->language = $PHPMAILER_LANG;
-    return true;
+    return TRUE;
   }
 
   /**

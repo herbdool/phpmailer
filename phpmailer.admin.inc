@@ -124,7 +124,7 @@ function phpmailer_settings_form() {
   // If an address was given, send a test email message.
   $test_address = variable_get('smtp_test_address', '');
   if ($test_address != '') {
-    drupal_set_message(t('A test e-mail has been sent to %email.  You may want to <a href="!watchdog">check the logs</a> for any error messages.', array('%email' => $test_address, '!watchdog' => url('admin/reports/watchdog'))));
+    drupal_set_message(t('A test e-mail has been sent to %email.  You may want to <a href="!watchdog">check the logs</a> for any error messages.', array('%email' => $test_address, '!watchdog' => url('admin/reports/dblog'))));
     drupal_mail('phpmailer', 'test', $test_address, NULL);
     variable_del('smtp_test_address');
   }
