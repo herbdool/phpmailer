@@ -12,10 +12,15 @@ To submit bug reports and feature suggestions, or to track changes:
 
 -- REQUIREMENTS --
 
+* Access to an SMTP server
+
 * PHPMailer for PHP5/6
   http://phpmailer.codeworxtech.com
 
 Optional:
+
+* To connect to an SMTP server using SSL, your PHP installation needs to have
+  OpenSSL support.
 
 * Mime Mail module to send HTML e-mails
   http://drupal.org/project/mimemail
