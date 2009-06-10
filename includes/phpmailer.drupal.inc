@@ -22,9 +22,11 @@ function phpmailer_send($message) {
   }
 
   // Parse 'From' e-mail address.
-  $address        = phpmailer_parse_address($message['from']);
-  $mail->From     = $address[0]['mail'];
-  $mail->FromName = $address[0]['name'];
+  $address = phpmailer_parse_address($message['from']);
+  $mail->From = $address[0]['mail'];
+  if ($address[0]['name'] != '') {
+    $mail->FromName = $address[0]['name'];
+  }
   unset($message['headers']['From']);
 
   if (variable_get('phpmailer_debug_email', '') === '') {
