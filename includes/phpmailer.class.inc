@@ -82,25 +82,29 @@ class DrupalPHPMailer extends PHPMailer {
    *
    * To avoid having people to copy the languages/ directory, we provide
    * the english translations in this overridden method.
-   * Drupal's language code are different from those used by PHPMailer anyway,
+   * Drupal's language codes are different from those used by PHPMailer anyway,
    * and the messages only ever appear in the watchdog reports.
    */
   public function SetLanguage($lang_type = 'en', $lang_path = 'language/') {
-    $PHPMAILER_LANG = array();
-    $PHPMAILER_LANG['provide_address']      = 'You must provide at least one recipient email address.';
-    $PHPMAILER_LANG['mailer_not_supported'] = ' mailer is not supported.';
-    $PHPMAILER_LANG['execute']              = 'Could not execute: ';
-    $PHPMAILER_LANG['instantiate']          = 'Could not instantiate mail function.';
-    $PHPMAILER_LANG['authenticate']         = 'SMTP Error: Could not authenticate.';
-    $PHPMAILER_LANG['from_failed']          = 'The following From address failed: ';
-    $PHPMAILER_LANG['recipients_failed']    = 'SMTP Error: The following recipients failed: ';
-    $PHPMAILER_LANG['data_not_accepted']    = 'SMTP Error: Data not accepted.';
-    $PHPMAILER_LANG['connect_host']         = 'SMTP Error: Could not connect to SMTP host.';
-    $PHPMAILER_LANG['file_access']          = 'Could not access file: ';
-    $PHPMAILER_LANG['file_open']            = 'File Error: Could not open file: ';
-    $PHPMAILER_LANG['encoding']             = 'Unknown encoding: ';
-    $PHPMAILER_LANG['signing']              = 'Signing Error: ';
-    $this->language = $PHPMAILER_LANG;
+    $this->language = array(
+      'provide_address' => 'You must provide at least one recipient email address.',
+      'mailer_not_supported' => ' mailer is not supported.',
+      'execute' => 'Could not execute: ',
+      'instantiate' => 'Could not instantiate mail function.',
+      'authenticate' => 'SMTP Error: Could not authenticate.',
+      'from_failed' => 'The following From address failed: ',
+      'recipients_failed' => 'SMTP Error: The following recipients failed: ',
+      'data_not_accepted' => 'SMTP Error: Data not accepted.',
+      'connect_host' => 'SMTP Error: Could not connect to SMTP host.',
+      'file_access' => 'Could not access file: ',
+      'file_open' => 'File Error: Could not open file: ',
+      'encoding' => 'Unknown encoding: ',
+      'signing' => 'Signing Error: ',
+      'smtp_error' => 'SMTP server error: ',
+      'empty_message' => 'Message body empty',
+      'invalid_address' => 'Invalid address',
+      'variable_set' => 'Cannot set or reset variable: '
+    );
     return TRUE;
   }
 
