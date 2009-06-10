@@ -1,11 +1,14 @@
 // $Id$
 
-PHPMailer x.x-x.x, xxxx-xx-xx
------------------------------
-
-
 PHPMailer 6.x-2.x, xxxx-xx-xx
 -----------------------------
+
+
+PHPMailer 6.x-2.1, 2009-06-10
+-----------------------------
+by smk-ka: Updated external PHPMailer message strings.
+by smk-ka: Don't set FromName to an empty string.
+by smk-ka: Added public method SmtpSend for compatibility with PHPMailer 5.x.
 
 
 PHPMailer 6.x-2.0, 2009-05-17
