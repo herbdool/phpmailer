@@ -78,6 +78,13 @@ class DrupalPHPMailer extends PHPMailer {
   }
 
   /**
+   * Sends mail via SMTP.
+   */
+  public function SmtpSend($header, $body) {
+    return parent::SmtpSend($header, $body);
+  }
+
+  /**
    * Sets the language for all class error messages.
    *
    * To avoid having people to copy the languages/ directory, we provide
