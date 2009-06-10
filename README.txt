@@ -15,8 +15,13 @@ To submit bug reports and feature suggestions, or to track changes:
 * PHPMailer for PHP5/6
   http://phpmailer.codeworxtech.com
 
-* Optionally the Mime Mail module to send HTML e-mails
+Optional:
+
+* Mime Mail module to send HTML e-mails
   http://drupal.org/project/mimemail
+
+* Personalized E-mails module to adjust the displayed sender name
+  http://drupal.org/project/pmail
 
 
 -- INSTALLATION --
