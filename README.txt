@@ -48,36 +48,44 @@ Optional:
 
 -- CONFIGURATION --
 
-When not using the optional Mime Mail module, customize module settings at
-Administer >> Site configuration >> PHPMailer.
+* Configure user permissions at Administer >> User management >> Access control
+  >> phpmailer module.
 
-If used in conjunction with Mime Mail, PHPMailer will show up as an e-mail
-engine in the Mime Mail module settings.  Note that there will be no separate
-PHPMailer settings page in this case.
+  Only users with the "administer phpmailer settings" permission will gain
+  access to the module configuration page.
 
-- Google Mail -
+* When not using the optional Mime Mail module, customize module settings at
+  Administer >> Site configuration >> PHPMailer.
 
-To send e-mails with Google Mail use the following settings:
+  If used in conjunction with Mime Mail, PHPMailer will show up as an e-mail
+  engine in the Mime Mail module settings.  Note that there will be no separate
+  PHPMailer configuration page in this case.
 
-* SMTP server:     smtp.gmail.com
-* SMTP port:       465
-* Secure protocol: SSL
-* Username:        your_google_mail_name@gmail.com
-* Password:        your_google_mail_password
+* Using Google Mail as SMTP server
 
-Note however, that Google automatically rewrites the "from" line of any e-mail
-you send via their SMTP gateway to your Gmail address.
+  To send e-mails with Google Mail use the following settings:
 
-- Debugging -
+    SMTP server:     smtp.gmail.com
+    SMTP port:       465
+    Secure protocol: SSL
+    Username:        your_google_mail_name@gmail.com
+    Password:        your_google_mail_password
 
-PHPMailer supports rerouting all e-mails for debugging purposes, so you don't
-accidentally send e-mails to your users from a development site.  To enable this
-feature, add the following lines to the end of your settings.php (usually
-located in sites/default):
+  Note however, that Google automatically rewrites the "from" line of any e-mail
+  you send via their SMTP gateway to your Google Mail address.
 
-$conf = array(
-  'phpmailer_debug_email' => 'your_debug_email@yoursite.com',
-);
+* Debug settings
+
+  PHPMailer supports rerouting all e-mails for debugging purposes, so you don't
+  accidentally send e-mails to your users from a development site.  To enable
+  this feature, add the following lines to the end of your settings.php (usually
+  located in sites/default):
+
+    $conf = array(
+      'phpmailer_debug_email' => 'your_debug_email@yoursite.com',
+    );
+
+  This will change the recipient of all e-mails to the configured address.
 
 
 -- CREDITS --
