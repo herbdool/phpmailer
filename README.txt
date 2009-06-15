@@ -51,18 +51,33 @@ Optional:
 When not using the optional Mime Mail module, customize module settings at
 Administer >> Site configuration >> PHPMailer.
 
-Otherwise PHPMailer will show up as an e-mail engine
+If used in conjunction with Mime Mail, PHPMailer will show up as an e-mail
+engine in the Mime Mail module settings.  Note that there will be no separate
+PHPMailer settings page in this case.
+
+- Google Mail -
 
 To send e-mails with Google Mail use the following settings:
 
 * SMTP server:     smtp.gmail.com
 * SMTP port:       465
 * Secure protocol: SSL
-* Username:        <your google mail name>@gmail.com
-* Password:        <your google mail password>
+* Username:        your_google_mail_name@gmail.com
+* Password:        your_google_mail_password
 
 Note however, that Google automatically rewrites the "from" line of any e-mail
 you send via their SMTP gateway to your Gmail address.
+
+- Debugging -
+
+PHPMailer supports rerouting all e-mails for debugging purposes, so you don't
+accidentally send e-mails to your users from a development site.  To enable this
+feature, add the following lines to the end of your settings.php (usually
+located in sites/default):
+
+$conf = array(
+  'phpmailer_debug_email' => 'your_debug_email@yoursite.com',
+);
 
 
 -- CREDITS --
