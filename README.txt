@@ -72,7 +72,10 @@ Optional:
     Password:        your_google_mail_password
 
   Note however, that Google automatically rewrites the "from" line of any e-mail
-  you send via their SMTP gateway to your Google Mail address.
+  you send via their SMTP gateway to your Google Mail address.  Also note the
+  sending limits [1] for Google Mail accounts.
+
+  [1] http://mail.google.com/support/bin/answer.py?hl=en&answer=22839
 
 * Debug settings
 
