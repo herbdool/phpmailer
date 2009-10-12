@@ -36,12 +36,12 @@ function phpmailer_menu() {
 }
 
 /**
- * Implementation of hook_form_alter().
+ * Implementation of hook_form_FORM_ID_alter().
  */
-function phpmailer_form_alter(&$form, &$form_state, $form_id) {
+function phpmailer_form_mimemail_settings_alter(&$form, &$form_state) {
   // Hide the mimemail global enabler setting if phpmailer is used to deliver
   // all e-mails (they can't be both active).
-  if ($form_id == 'mimemail_settings' && strpos(variable_get('smtp_library', ''), 'phpmailer')) {
+  if (strpos(variable_get('smtp_library', ''), 'phpmailer')) {
     $form['mimemail']['mimemail_alter'] = array(
       '#type' => 'value',
       '#value' => 0,
