@@ -33,7 +33,7 @@ Optional:
 
 1. Download PHPMailer for PHP5/6 from
 
-     http://sourceforge.net/project/showfiles.php?group_id=26031&package_id=252700
+     http://sourceforge.net/projects/phpmailer/files/phpmailer%20for%20php5_6/
 
    and extract the the following files to the subdirectory 'phpmailer' of this
    module:
