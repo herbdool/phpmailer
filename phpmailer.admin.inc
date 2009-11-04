@@ -14,7 +14,7 @@
  * @see phpmailer_settings_form_submit()
  */
 function phpmailer_settings_form() {
-  if (!module_exists('mimemail')) {
+  if (!module_exists('mimemail') || !variable_get('mimemail_alter', 0)) {
     $form['smtp_on'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use PHPMailer to send e-mails'),

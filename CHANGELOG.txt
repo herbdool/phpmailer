@@ -15,6 +15,8 @@ by smk-ka: Checking requirements before allowing to install the module.
 by smk-ka: Documentation updates.
 by smk-ka: Fixed PHPMailer settings not saved when used as Mime Mail engine.
 by smk-ka: Fixed Admin Menu not visible anymore.
+by smk-ka: Regression: Fixed not being able to enable either Mime Mail or
+ PHPMailer for e-mail delivery.
 
 
 PHPMailer 6.x-2.1, 2009-06-10
