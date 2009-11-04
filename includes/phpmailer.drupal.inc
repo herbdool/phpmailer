@@ -52,6 +52,14 @@ function phpmailer_send($message) {
   }
   unset($message['headers']['CC'], $message['headers']['BCC']);
 
+  // Extract Reply-To from headers.
+  if (isset($message['headers']['Reply-To'])) {
+    foreach (phpmailer_parse_address($message['headers']['Reply-To']) as $address) {
+      $mail->AddReplyTo($address['mail'], $address['name']);
+    }
+  }
+  unset($message['headers']['Reply-To']);
+
   // Extract Content-Type and charset.
   if (isset($message['headers']['Content-Type'])) {
     $content_type = explode(';', $message['headers']['Content-Type']);

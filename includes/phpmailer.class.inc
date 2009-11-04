@@ -67,6 +67,7 @@ class DrupalPHPMailer extends PHPMailer {
    */
   public function Reset() {
     $this->ClearAllRecipients();
+    $this->ClearReplyTos();
     $this->ClearAttachments();
     $this->ClearCustomHeaders();
 

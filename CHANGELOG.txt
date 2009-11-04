@@ -19,6 +19,7 @@ by smk-ka: Regression: Fixed not being able to enable either Mime Mail or
  PHPMailer for e-mail delivery.
 by smk-ka: Moved resetting email properties to DrupalPHPMailer::SmtpSend().
 by smk-ka: Provide more user-friendly error messages.
+#607204 by smk-ka: Added support for Reply-To headers.
 
 
 PHPMailer 6.x-2.1, 2009-06-10
