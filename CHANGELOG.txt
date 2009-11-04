@@ -9,6 +9,8 @@ PHPMailer 6.x-2.x, xxxx-xx-xx
  PHPMailer.
 by smk-ka: Cleaned up Mime Mail integration. Ported the HTML e-mail preview to
  D6.
+by smk-ka: Disabling the module now resets the smtp_library and mimemail_engine
+ variables, to avoid a WSOD.
 
 
 PHPMailer 6.x-2.1, 2009-06-10

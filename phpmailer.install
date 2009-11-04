@@ -10,9 +10,6 @@
  * Implementation of hook_uninstall().
  */
 function phpmailer_uninstall() {
-  if (strpos(variable_get('smtp_library', ''), 'phpmailer')) {
-    variable_del('smtp_library');
-  }
   variable_del('smtp_on');
   variable_del('smtp_host');
   variable_del('smtp_hostbackup');
