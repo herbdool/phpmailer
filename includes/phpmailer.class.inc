@@ -14,7 +14,7 @@ module_load_include('php', 'phpmailer', 'phpmailer/class.phpmailer');
  */
 class DrupalPHPMailer extends PHPMailer {
   /**
-   * Stores the Return-Path, which can be different from Sender.
+   * Stores the Return-Path, which may be different from Sender.
    */
   public $ReturnPath = '';
 
@@ -95,19 +95,19 @@ class DrupalPHPMailer extends PHPMailer {
   }
 
   /**
-   * Sends mail via SMTP.
+   * Public wrapper around PHPMailer::SmtpSend().
    */
   public function SmtpSend($header, $body) {
     return parent::SmtpSend($header, $body);
   }
 
   /**
-   * Sets the language for all class error messages.
+   * Set the language for all class error messages.
    *
    * To avoid having people to copy the languages/ directory, we provide
    * the english translations in this overridden method.
    * Drupal's language codes are different from those used by PHPMailer anyway,
-   * and the messages only ever appear in the watchdog reports.
+   * and the messages will only ever appear in the watchdog reports.
    */
   public function SetLanguage($lang_type = 'en', $lang_path = 'language/') {
     $this->language = array(
@@ -133,7 +133,7 @@ class DrupalPHPMailer extends PHPMailer {
   }
 
   /**
-   * Assembles message header.
+   * Assemble the message header.
    *
    * PHPMailer always sets Return-Path to Sender, we want more flexibility.
    */
@@ -149,7 +149,7 @@ class DrupalPHPMailer extends PHPMailer {
   }
 
   /**
-   * Returns the proper RFC 822 formatted date.
+   * Public wrapper around PHPMailer::RFCDate().
    */
   public static function RFCDate() {
     $tz = date('Z');

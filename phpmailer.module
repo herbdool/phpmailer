@@ -3,8 +3,8 @@
 
 /**
  * @file
- * This module integrates PHPMailer with Drupal, both as native drupal_mail()
- * wrapper, and as part of the Mime Mail module.
+ * Integrates PHPMailer with Drupal, both as native drupal_mail() wrapper, and
+ * as part of the Mime Mail module.
  */
 
 /**
@@ -40,8 +40,8 @@ function phpmailer_menu() {
  * Implementation of hook_form_FORM_ID_alter().
  */
 function phpmailer_form_mimemail_settings_alter(&$form, &$form_state) {
-  // Hide the mimemail global enabler setting if phpmailer is used to deliver
-  // all e-mails (they can't be both active).
+  // Hide the Mime Mail global enabler setting if phpmailer is used to deliver
+  // e-mails (they can't be both active).
   if (phpmailer_enabled()) {
     $form['mimemail']['mimemail_alter'] = array(
       '#type' => 'value',
@@ -120,7 +120,7 @@ function phpmailer_parse_address($address) {
 }
 
 /**
- * Block access to settings page if Mime Mail module is enabled.
+ * Menu access callback; Block access to settings page if Mime Mail module is enabled.
  */
 function phpmailer_settings_access() {
   if (module_exists('mimemail')) {

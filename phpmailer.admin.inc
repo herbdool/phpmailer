@@ -8,6 +8,10 @@
 
 /**
  * Form builder for both the Mime Mail hook and our own menu callback.
+ *
+ * @ingroup forms
+ * @see phpmailer_settings_form_validate()
+ * @see phpmailer_settings_form_submit()
  */
 function phpmailer_settings_form() {
   if (!module_exists('mimemail')) {

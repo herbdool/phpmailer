@@ -12,6 +12,7 @@ by smk-ka: Cleaned up Mime Mail integration. Ported the HTML e-mail preview to
 by smk-ka: Disabling the module now resets the smtp_library and mimemail_engine
  variables, to avoid a WSOD.
 by smk-ka: Checking requirements before allowing to install the module.
+by smk-ka: Documentation updates.
 
 
 PHPMailer 6.x-2.1, 2009-06-10
