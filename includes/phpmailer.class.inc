@@ -22,6 +22,9 @@ class DrupalPHPMailer extends PHPMailer {
    * Constructor.
    */
   public function __construct() {
+    // Throw exceptions instead of echoing error messages (since 5.0.0).
+    parent::__construct(TRUE);
+
     $this->IsSMTP();
     $this->Reset();
 
@@ -42,6 +45,20 @@ class DrupalPHPMailer extends PHPMailer {
 
     // Adjust path to SMTP class.
     $this->PluginDir = drupal_get_path('module', 'phpmailer') . '/phpmailer/';
+  }
+
+  /**
+   * Wrapper around PHPMailer::Send() that properly handles exceptions.
+   */
+  public function Send() {
+    try {
+      $result = parent::Send();
+    }
+    catch (phpmailerException $e) {
+      drupal_set_message($e->getMessage(), 'error');
+      $result = FALSE;
+    }
+    return $result;
   }
 
   /**
