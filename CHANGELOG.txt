@@ -18,6 +18,7 @@ by smk-ka: Fixed Admin Menu not visible anymore.
 by smk-ka: Regression: Fixed not being able to enable either Mime Mail or
  PHPMailer for e-mail delivery.
 by smk-ka: Moved resetting email properties to DrupalPHPMailer::SmtpSend().
+by smk-ka: Provide more user-friendly error messages.
 
 
 PHPMailer 6.x-2.1, 2009-06-10

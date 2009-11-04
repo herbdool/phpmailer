@@ -55,7 +55,8 @@ class DrupalPHPMailer extends PHPMailer {
       $result = parent::Send();
     }
     catch (phpmailerException $e) {
-      drupal_set_message($e->getMessage(), 'error');
+      // Provide a more helpful error message.
+      drupal_set_message(t('Sending of at least one e-mail failed. The error returned was:<br />@error.', array('@error' => $e->getMessage())), 'error');
       $result = FALSE;
     }
     return $result;
@@ -104,32 +105,33 @@ class DrupalPHPMailer extends PHPMailer {
   }
 
   /**
-   * Set the language for all class error messages.
+   * Provide more user-friendly error messages.
    *
-   * To avoid having people to copy the languages/ directory, we provide
-   * the english translations in this overridden method.
-   * Drupal's language codes are different from those used by PHPMailer anyway,
-   * and the messages will only ever appear in the watchdog reports.
+   * Note: messages should not end with a dot.
    */
-  public function SetLanguage($lang_type = 'en', $lang_path = 'language/') {
+  public function SetLanguage() {
     $this->language = array(
-      'provide_address' => 'You must provide at least one recipient email address.',
-      'mailer_not_supported' => ' mailer is not supported.',
-      'execute' => 'Could not execute: ',
-      'instantiate' => 'Could not instantiate mail function.',
-      'authenticate' => 'SMTP Error: Could not authenticate.',
-      'from_failed' => 'The following From address failed: ',
-      'recipients_failed' => 'SMTP Error: The following recipients failed: ',
-      'data_not_accepted' => 'SMTP Error: Data not accepted.',
-      'connect_host' => 'SMTP Error: Could not connect to SMTP host.',
-      'file_access' => 'Could not access file: ',
-      'file_open' => 'File Error: Could not open file: ',
-      'encoding' => 'Unknown encoding: ',
-      'signing' => 'Signing Error: ',
-      'smtp_error' => 'SMTP server error: ',
-      'empty_message' => 'Message body empty',
-      'invalid_address' => 'Invalid address',
-      'variable_set' => 'Cannot set or reset variable: '
+      'provide_address'     => t('You must provide at least one recipient e-mail address'),
+      'encoding'            => t('Unknown encoding: '),
+      'file_open'           => t('Could not open file: '),
+      'signing'             => t('Signing error: '),
+      'empty_message'       => t('Message body empty'),
+      'tls'                 => t('SMTP error: STARTTLS not accepted from server'),
+      'authenticate'        => t('SMTP error: could not authenticate'),
+      'smtp_connect_failed' => t('SMTP error: could not connect to SMTP host'),
+      'from_failed'         => t('The following sender failed: '), // non-admin
+      'recipients_failed'   => t('The following recipients failed: '), // non-admin
+      'data_not_accepted'   => t('SMTP error: data not accepted'),
+      'smtp_error'          => t('SMTP server error: '),
+
+      // Unused messages.
+      //'execute'           => t('Could not execute: '),
+      //'instantiate'       => t('Could not instantiate mail() function.'),
+
+      // Messages used during email generation.
+      'file_access'         => t('Could not access file: '),
+      'invalid_address'     => t('Invalid address'),
+      'variable_set'        => t('Cannot set or reset variable: '),
     );
     return TRUE;
   }
