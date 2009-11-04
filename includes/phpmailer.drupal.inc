@@ -108,9 +108,6 @@ function phpmailer_send($message) {
     watchdog('phpmailer', $mail->ErrorInfo, NULL, WATCHDOG_ERROR);
   }
 
-  // Reset object properties.
-  $mail->Reset();
-
   if ($mail->SMTPDebug) {
     if ($debug = ob_get_contents()) {
       drupal_set_message($debug);

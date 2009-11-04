@@ -73,7 +73,6 @@ class DrupalPHPMailer extends PHPMailer {
     $this->CharSet     = variable_get('smtp_charset', 'utf-8');
     $this->ContentType = 'text/plain';
     $this->Encoding    = '8bit';
-    $this->ErrorInfo   = '';
 
     // Set default From name.
     $from_name = variable_get('smtp_fromname', '');
@@ -98,7 +97,10 @@ class DrupalPHPMailer extends PHPMailer {
    * Public wrapper around PHPMailer::SmtpSend().
    */
   public function SmtpSend($header, $body) {
-    return parent::SmtpSend($header, $body);
+    $result = parent::SmtpSend($header, $body);
+    // Reinitialize properties.
+    $this->Reset();
+    return $result;
   }
 
   /**
