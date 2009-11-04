@@ -57,8 +57,8 @@ function phpmailer_send($message) {
     foreach (phpmailer_parse_address($message['headers']['Reply-To']) as $address) {
       $mail->AddReplyTo($address['mail'], $address['name']);
     }
+    unset($message['headers']['Reply-To']);
   }
-  unset($message['headers']['Reply-To']);
 
   // Extract Content-Type and charset.
   if (isset($message['headers']['Content-Type'])) {
