@@ -136,10 +136,6 @@ function phpmailer_settings_access() {
  * Menu access callback; Determine access for HTML mail preview page.
  */
 function phpmailer_preview_access() {
-  // Suppress admin menu and devel output in preview.
-  admin_menu_suppress(TRUE);
-  $GLOBALS['devel_shutdown'] = TRUE;
-
   if (module_exists('mimemail')) {
     return user_access('administer phpmailer settings');
   }

@@ -191,6 +191,9 @@ function phpmailer_mail($key, &$message, $params) {
 function phpmailer_preview() {
   global $user;
 
+  // Suppress devel output in preview.
+  $GLOBALS['devel_shutdown'] = TRUE;
+
   $mailkey = 'phpmailer_preview';
   // Use example address to prevent usage of configurable mail format setting.
   $recipient = 'test@example.com';

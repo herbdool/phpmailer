@@ -14,6 +14,7 @@ by smk-ka: Disabling the module now resets the smtp_library and mimemail_engine
 by smk-ka: Checking requirements before allowing to install the module.
 by smk-ka: Documentation updates.
 by smk-ka: Fixed PHPMailer settings not saved when used as Mime Mail engine.
+by smk-ka: Fixed Admin Menu not visible anymore.
 
 
 PHPMailer 6.x-2.1, 2009-06-10
