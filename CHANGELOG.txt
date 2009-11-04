@@ -2,6 +2,7 @@
 
 PHPMailer 6.x-2.x, xxxx-xx-xx
 -----------------------------
+#491658 by a_c_m, smk-ka: Setting FromName also for Mime Mail messages.
 
 
 PHPMailer 6.x-2.1, 2009-06-10

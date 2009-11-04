@@ -28,6 +28,9 @@ function mimemail_phpmailer_send($message) {
 
   // Parse 'From' e-mail address.
   $address = phpmailer_parse_address($message['sender']);
+  if ($address[0]['name'] != '') {
+    $mail->FromName = $address[0]['name'];
+  }
   $mail->From = $address[0]['mail'];
 
   if (variable_get('phpmailer_debug_email', '') === '') {
