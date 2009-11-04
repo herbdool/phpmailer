@@ -19,7 +19,7 @@ function phpmailer_settings_form() {
       '#type' => 'checkbox',
       '#title' => t('Use PHPMailer to send e-mails'),
       '#default_value' => variable_get('smtp_on', 0),
-      '#description' => t('When enabled, PHPMailer will be used for e-mail transport.'),
+      '#description' => t('When enabled, PHPMailer will be used to deliver all site e-mails.'),
     );
   }
   else {
