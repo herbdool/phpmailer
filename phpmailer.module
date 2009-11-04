@@ -41,7 +41,7 @@ function phpmailer_menu() {
 function phpmailer_form_mimemail_settings_alter(&$form, &$form_state) {
   // Hide the mimemail global enabler setting if phpmailer is used to deliver
   // all e-mails (they can't be both active).
-  if (strpos(variable_get('smtp_library', ''), 'phpmailer')) {
+  if (phpmailer_enabled()) {
     $form['mimemail']['mimemail_alter'] = array(
       '#type' => 'value',
       '#value' => 0,
@@ -49,7 +49,14 @@ function phpmailer_form_mimemail_settings_alter(&$form, &$form_state) {
   }
 }
 
-if (strpos(variable_get('smtp_library', ''), 'phpmailer') && !function_exists('drupal_mail_wrapper')) {
+/**
+ * Determine if PHPMailer is used to deliver e-mails.
+ */
+function phpmailer_enabled() {
+  return strpos(variable_get('smtp_library', ''), 'phpmailer');
+}
+
+if (phpmailer_enabled() && !function_exists('drupal_mail_wrapper')) {
   /**
    * Implementation of drupal_mail_wrapper().
    */

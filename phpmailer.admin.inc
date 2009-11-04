@@ -10,20 +10,7 @@
  * Form builder for both the Mime Mail hook and our own menu callback.
  */
 function phpmailer_settings_form() {
-  // Override the 'smtp_library' variable.
-  $smtp_library = variable_get('smtp_library', '');
-  if (variable_get('smtp_on', 0)) {
-    if (!strpos($smtp_library, 'phpmailer')) {
-      variable_set('smtp_library', drupal_get_filename('module', 'phpmailer'));
-    }
-  }
-  else {
-    if (strpos($smtp_library, 'phpmailer')) {
-      variable_del('smtp_library');
-    }
-  }
-
-  if (!variable_get('mimemail_alter', 0)) {
+  if (!module_exists('mimemail')) {
     $form['smtp_on'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use PHPMailer to send e-mails'),
@@ -119,12 +106,12 @@ function phpmailer_settings_form() {
     '#description' => t("Debug the communication with the SMTP server.  You normally shouldn't enable this unless you're trying to debug e-mail sending problems."),
   );
 
-  // If an address was given, send a test email message.
-  $test_address = variable_get('smtp_test_address', '');
-  if ($test_address != '') {
-    drupal_set_message(t('A test e-mail has been sent to %email.  You may want to <a href="!watchdog">check the logs</a> for any error messages.', array('%email' => $test_address, '!watchdog' => url('admin/reports/dblog'))));
-    drupal_mail('phpmailer', 'test', $test_address, NULL);
+  // Send a test email message if an address has been entered.
+  if ($test_address = variable_get('smtp_test_address', '')) {
+    // Delete first to avoid unintended resending in case of an error.
     variable_del('smtp_test_address');
+    drupal_mail('phpmailer', 'test', $test_address, NULL);
+    drupal_set_message(t('A test e-mail has been sent to %email. <a href="@watchdog-url">Check the logs</a> for any error messages.', array('%email' => $test_address, '@watchdog-url' => url('admin/reports/dblog'))));
   }
 
   $form['test'] = array(
@@ -147,10 +134,44 @@ function phpmailer_settings_form() {
     );
   }
 
+  $form['#validate'] = array('phpmailer_settings_form_validate');
+  $form['#submit'] = array('phpmailer_settings_form_submit');
+
   if (!module_exists('mimemail')) {
     return system_settings_form($form);
   }
   return $form;
+}
+
+/**
+ * Form validation function.
+ *
+ * @see phpmailer_settings_form()
+ */
+function phpmailer_settings_form_validate($form, &$form_state) {
+  if ($form_state['values']['smtp_on']) {
+    if (intval($form_state['values']['smtp_port']) == 0) {
+      form_set_error('smtp_port', t('You need to enter a valid SMTP port number.'));
+    }
+  }
+}
+
+/**
+ * Form submit function.
+ *
+ * @see phpmailer_settings_form()
+ */
+function phpmailer_settings_form_submit($form, &$form_state) {
+  if ($form_state['values']['smtp_on']) {
+    if (!phpmailer_enabled()) {
+      variable_set('smtp_library', drupal_get_filename('module', 'phpmailer'));
+    }
+  }
+  else {
+    if (phpmailer_enabled()) {
+      variable_del('smtp_library');
+    }
+  }
 }
 
 /**
