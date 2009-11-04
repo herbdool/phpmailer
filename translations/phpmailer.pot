@@ -1,0 +1,288 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  phpmailer.admin.inc,v 1.15 2009/11/04 19:37:13 smk
+#  phpmailer.module,v 1.11 2009/11/04 19:19:32 smk
+#  phpmailer.info,v 1.4 2009/11/04 19:37:13 smk
+#  phpmailer.install,v 1.3 2009/11/04 16:47:51 smk
+#  phpmailer.class.inc,v 1.13 2009/11/04 20:14:50 smk
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-11-04 21:21+0100\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: phpmailer.admin.inc:20
+msgid "Use PHPMailer to send e-mails"
+msgstr ""
+
+#: phpmailer.admin.inc:22
+msgid "When enabled, PHPMailer will be used to deliver all site e-mails."
+msgstr ""
+
+#: phpmailer.admin.inc:34
+msgid "Primary SMTP server"
+msgstr ""
+
+#: phpmailer.admin.inc:36
+msgid "The host name or IP address of your primary SMTP server.  Use !gmail-smtp for Google Mail."
+msgstr ""
+
+#: phpmailer.admin.inc:41
+msgid "Backup SMTP server"
+msgstr ""
+
+#: phpmailer.admin.inc:43
+msgid "Optional host name or IP address of a backup server, if the primary server fails.  You can override the default port by appending it to the host name separated with a colon.  Example: !hostname"
+msgstr ""
+
+#: phpmailer.admin.inc:47
+msgid "SMTP port"
+msgstr ""
+
+#: phpmailer.admin.inc:51
+msgid "The standard SMTP port is 25, for Google Mail use 465."
+msgstr ""
+
+#: phpmailer.admin.inc:56
+msgid "Use secure protocol"
+msgstr ""
+
+#: phpmailer.admin.inc:58
+msgid "No"
+msgstr ""
+
+#: phpmailer.admin.inc:58
+msgid "SSL"
+msgstr ""
+
+#: phpmailer.admin.inc:58
+msgid "TLS"
+msgstr ""
+
+#: phpmailer.admin.inc:59
+msgid "Whether to use an encrypted connection to communicate with the SMTP server.  Google Mail requires %SSL."
+msgstr ""
+
+#: phpmailer.admin.inc:64
+msgid "Note: This option has been disabled since your PHP installation does not seem to have support for OpenSSL."
+msgstr ""
+
+#: phpmailer.admin.inc:70
+msgid "SMTP authentication"
+msgstr ""
+
+#: phpmailer.admin.inc:71
+msgid "Leave blank if your SMTP server does not require authentication."
+msgstr ""
+
+#: phpmailer.admin.inc:77
+msgid "Username"
+msgstr ""
+
+#: phpmailer.admin.inc:79
+msgid "For Google Mail, enter your username including \"@gmail.com\"."
+msgstr ""
+
+#: phpmailer.admin.inc:83
+msgid "Password"
+msgstr ""
+
+#: phpmailer.admin.inc:89
+msgid "Advanced SMTP settings"
+msgstr ""
+
+#: phpmailer.admin.inc:95
+msgid "Keep connection alive"
+msgstr ""
+
+#: phpmailer.admin.inc:97
+msgid "Whether to reuse an existing connection during a request.  Improves performance when sending a lot of e-mails at once."
+msgstr ""
+
+#: phpmailer.admin.inc:101
+msgid "\"From\" name"
+msgstr ""
+
+#: phpmailer.admin.inc:103
+msgid "Enter a name that should appear as the sender for all messages.  If left blank the site name will be used instead: %sitename."
+msgstr ""
+
+#: phpmailer.admin.inc:107
+msgid "Debug level"
+msgstr ""
+
+#: phpmailer.admin.inc:109
+msgid "Disabled"
+msgstr ""
+
+#: phpmailer.admin.inc:109
+msgid "Errors only"
+msgstr ""
+
+#: phpmailer.admin.inc:109
+msgid "Server responses"
+msgstr ""
+
+#: phpmailer.admin.inc:109
+msgid "Full communication"
+msgstr ""
+
+#: phpmailer.admin.inc:110
+msgid "Debug the communication with the SMTP server.  You normally shouldn't enable this unless you're trying to debug e-mail sending problems."
+msgstr ""
+
+#: phpmailer.admin.inc:118
+msgid "A test e-mail has been sent to %email. <a href=\"@watchdog-url\">Check the logs</a> for any error messages."
+msgstr ""
+
+#: phpmailer.admin.inc:123
+msgid "Test configuration"
+msgstr ""
+
+#: phpmailer.admin.inc:129
+msgid "Recipient"
+msgstr ""
+
+#: phpmailer.admin.inc:131
+msgid "Type in an address to have a test e-mail sent there."
+msgstr ""
+
+#: phpmailer.admin.inc:136
+msgid "Preview"
+msgstr ""
+
+#: phpmailer.admin.inc:137
+msgid "For theming of HTML mails sent via Mime Mail, you can <a href=\"@preview-url\" target=\"_blank\">preview an example mail</a>."
+msgstr ""
+
+#: phpmailer.admin.inc:157
+msgid "You need to enter a valid SMTP port number."
+msgstr ""
+
+#: phpmailer.admin.inc:184
+msgid "PHPMailer test e-mail"
+msgstr ""
+
+#: phpmailer.admin.inc:185
+msgid "Your site is properly configured to send e-mails using the PHPMailer library."
+msgstr ""
+
+#: phpmailer.module:79;22 phpmailer.info:0
+msgid "PHPMailer"
+msgstr ""
+
+#: phpmailer.module:82
+msgid "Mailing engine using the PHPMailer library."
+msgstr ""
+
+#: phpmailer.module:151
+msgid "PHPMailer has been disabled."
+msgstr ""
+
+#: phpmailer.module:155
+msgid "MimeMail e-mail engine has been reset."
+msgstr ""
+
+#: phpmailer.module:14
+msgid "administer phpmailer settings"
+msgstr ""
+
+#: phpmailer.module:23
+msgid "Configure PHPMailer settings."
+msgstr ""
+
+#: phpmailer.module:30
+msgid "Mail preview"
+msgstr ""
+
+#: (duplicate) phpmailer.install:20 ;33 
+msgid "PHPMailer library"
+msgstr ""
+
+#: (duplicate) phpmailer.install:22 
+msgid "PHPMailer module requires the <a href=\"@phpmailer-url\">PHPMailer</a> library to properly send mail. Please download the PHPMailer package for PHP5/6, extract the archive and copy its contents to the following location: @phpmailer-path. Make sure the main PHPMailer class is located at @phpmailer-class-path."
+msgstr ""
+
+#: phpmailer.info:0
+msgid "Integrates the PHPMailer library for e-mail delivery."
+msgstr ""
+
+#: phpmailer.info:0
+msgid "Mail"
+msgstr ""
+
+#: includes/phpmailer.class.inc:59
+msgid "Sending of at least one e-mail failed. The error returned was:<br />@error."
+msgstr ""
+
+#: includes/phpmailer.class.inc:115
+msgid "You must provide at least one recipient e-mail address"
+msgstr ""
+
+#: includes/phpmailer.class.inc:116
+msgid "Unknown encoding: "
+msgstr ""
+
+#: includes/phpmailer.class.inc:117
+msgid "Could not open file: "
+msgstr ""
+
+#: includes/phpmailer.class.inc:118
+msgid "Signing error: "
+msgstr ""
+
+#: includes/phpmailer.class.inc:119
+msgid "Message body empty"
+msgstr ""
+
+#: includes/phpmailer.class.inc:120
+msgid "SMTP error: STARTTLS not accepted from server"
+msgstr ""
+
+#: includes/phpmailer.class.inc:121
+msgid "SMTP error: could not authenticate"
+msgstr ""
+
+#: includes/phpmailer.class.inc:122
+msgid "SMTP error: could not connect to SMTP host"
+msgstr ""
+
+#: includes/phpmailer.class.inc:123
+msgid "The following sender failed: "
+msgstr ""
+
+#: includes/phpmailer.class.inc:124
+msgid "The following recipients failed: "
+msgstr ""
+
+#: includes/phpmailer.class.inc:125
+msgid "SMTP error: data not accepted"
+msgstr ""
+
+#: includes/phpmailer.class.inc:126
+msgid "SMTP server error: "
+msgstr ""
+
+#: includes/phpmailer.class.inc:133
+msgid "Could not access file: "
+msgstr ""
+
+#: includes/phpmailer.class.inc:134
+msgid "Invalid address"
+msgstr ""
+
+#: includes/phpmailer.class.inc:135
+msgid "Cannot set or reset variable: "
+msgstr ""
+
