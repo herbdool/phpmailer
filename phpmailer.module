@@ -39,7 +39,7 @@ function phpmailer_menu() {
 /**
  * Implementation of hook_form_FORM_ID_alter().
  */
-function phpmailer_form_mimemail_settings_alter(&$form, &$form_state) {
+function phpmailer_form_mimemail_admin_settings_alter(&$form, &$form_state) {
   // Hide the Mime Mail global enabler setting if phpmailer is used to deliver
   // e-mails (they can't be both active).
   if (phpmailer_enabled()) {
@@ -48,6 +48,9 @@ function phpmailer_form_mimemail_settings_alter(&$form, &$form_state) {
       '#value' => 0,
     );
   }
+  // Add custom validation and submit handlers.
+  $form['#validate'][] = 'phpmailer_settings_form_validate';
+  $form['#submit'][] = 'phpmailer_settings_form_submit';
 }
 
 /**

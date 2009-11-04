@@ -138,10 +138,12 @@ function phpmailer_settings_form() {
     );
   }
 
-  $form['#validate'] = array('phpmailer_settings_form_validate');
-  $form['#submit'] = array('phpmailer_settings_form_submit');
+  if (module_exists('mimemail')) {
+    return $form;
+  }
 
-  return module_exists('mimemail') ? $form : system_settings_form($form);
+  $form['#submit'] = array('phpmailer_settings_form_submit');
+  return system_settings_form($form);
 }
 
 /**
