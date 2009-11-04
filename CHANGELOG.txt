@@ -7,6 +7,8 @@ PHPMailer 6.x-2.x, xxxx-xx-xx
  to avoid dumping errors to the browser (since 5.0.0).
 #516450 by smk-ka: Fixed test mail cannot be sent at the same time as enabling
  PHPMailer.
+by smk-ka: Cleaned up Mime Mail integration. Ported the HTML e-mail preview to
+ D6.
 
 
 PHPMailer 6.x-2.1, 2009-06-10

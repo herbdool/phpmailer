@@ -126,7 +126,7 @@ function phpmailer_settings_form() {
     '#default_value' => '',
     '#description' => t('Type in an address to have a test e-mail sent there.'),
   );
-  if (!strpos(variable_get('smtp_library', ''), 'phpmailer') && module_exists('mimemail') && variable_get('mimemail_alter', 0)) {
+  if (module_exists('mimemail')) {
     $form['test']['preview'] = array(
       '#type' => 'item',
       '#title' => t('Preview'),
@@ -137,10 +137,7 @@ function phpmailer_settings_form() {
   $form['#validate'] = array('phpmailer_settings_form_validate');
   $form['#submit'] = array('phpmailer_settings_form_submit');
 
-  if (!module_exists('mimemail')) {
-    return system_settings_form($form);
-  }
-  return $form;
+  return module_exists('mimemail') ? $form : system_settings_form($form);
 }
 
 /**
@@ -180,5 +177,43 @@ function phpmailer_settings_form_submit($form, &$form_state) {
 function phpmailer_mail($key, &$message, $params) {
   $message['subject'] = t('PHPMailer test e-mail');
   $message['body'][] = t('Your site is properly configured to send e-mails using the PHPMailer library.');
+}
+
+/**
+ * Menu callback; Render a HTML mail preview in the browser.
+ */
+function phpmailer_preview() {
+  global $user;
+
+  $mailkey = 'phpmailer_preview';
+  // Use example address to prevent usage of configurable mail format setting.
+  $recipient = 'test@example.com';
+  // @see user_register_submit()
+  $language = user_preferred_language($user);
+  $variables = user_mail_tokens($user, $language);
+  $variables['!password'] = 'test';
+  $subject = _user_mail_text('register_no_approval_required_subject', $language, $variables);
+  $body = _user_mail_text('register_no_approval_required_body', $language, $variables);
+  $sender = NULL;
+  $headers = array();
+
+  // Convert non-html messages.
+  // @see drupal_mail_wrapper()
+  $format = variable_get('mimemail_format', FILTER_FORMAT_DEFAULT);
+  $body = check_markup($body, $format, FALSE);
+  // @see mimemail()
+  foreach (module_implements('mail_alter') as $module) {
+    $function = $module .'_mail_alter';
+    $function($mailkey, $recipient, $subject, $body, $sender, $headers);
+  }
+  // @see mimemail_prepare()
+  $body = theme('mimemail_message', $body, $mailkey);
+  foreach (module_implements('mail_post_process') as $module) {
+    $function = $module .'_mail_post_process';
+    $function($body, $mailkey);
+  }
+
+  print $body;
+  exit;
 }
 
