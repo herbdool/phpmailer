@@ -120,6 +120,7 @@ class DrupalPHPMailer extends PHPMailer {
       'tls'                 => t('SMTP error: STARTTLS not accepted from server'),
       'authenticate'        => t('SMTP error: could not authenticate'),
       'smtp_connect_failed' => t('SMTP error: could not connect to SMTP host'),
+      'connect_host'        => t('SMTP error: could not connect to SMTP host'),
       'from_failed'         => t('The following sender failed: '), // non-admin
       'recipients_failed'   => t('The following recipients failed: '), // non-admin
       'data_not_accepted'   => t('SMTP error: data not accepted'),
