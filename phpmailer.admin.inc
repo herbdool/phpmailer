@@ -40,7 +40,7 @@ function phpmailer_settings_form() {
     '#type' => 'textfield',
     '#title' => t('Backup SMTP server'),
     '#default_value' => variable_get('smtp_hostbackup', ''),
-    '#description' => t('Optional host name or IP address of a backup server, if the primary server fails.  You can override the default port by appending it to the host name separated with a colon.  Example: !hostname', array('!hostname' => '<code>localhost:465</code>')),
+    '#description' => t('Optional host name or IP address of a backup server, if the primary server fails.  You may override the default port below by appending it to the host name separated by a colon.  Example: !hostname', array('!hostname' => '<code>localhost:465</code>')),
   );
   $form['server']['smtp_port'] = array(
     '#type' => 'textfield',
@@ -78,11 +78,27 @@ function phpmailer_settings_form() {
     '#default_value' => variable_get('smtp_username', ''),
     '#description' => t('For Google Mail, enter your username including "@gmail.com".'),
   );
-  $form['auth']['smtp_password'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Password'),
-    '#default_value' => variable_get('smtp_password', ''),
-  );
+  if (!variable_get('smtp_hide_password', 0)) {
+    $form['auth']['smtp_password'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Password'),
+      '#default_value' => variable_get('smtp_password', ''),
+    );
+    $form['auth']['smtp_hide_password'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Hide password'),
+      '#default_value' => 0,
+      '#description' => t("Check this option to permanently hide the plaintext password from peeking eyes. You may still change the password afterwards, but it won't be displayed anymore."),
+    );
+  }
+  else {
+    $have_password = (variable_get('smtp_password', '') != '');
+    $form['auth']['smtp_password'] = array(
+      '#type' => 'password',
+      '#title' => $have_password ? t('Change password') : t('Password'),
+      '#description' => $have_password ? t('Leave empty if you do not intend to change the current password.') : '',
+    );
+  }
 
   $form['advanced'] = array(
     '#type' => 'fieldset',
@@ -143,6 +159,7 @@ function phpmailer_settings_form() {
   }
 
   $form['#submit'] = array('phpmailer_settings_form_submit');
+
   return system_settings_form($form);
 }
 
@@ -154,7 +171,7 @@ function phpmailer_settings_form() {
 function phpmailer_settings_form_validate($form, &$form_state) {
   if ($form_state['values']['smtp_on']) {
     if (intval($form_state['values']['smtp_port']) == 0) {
-      form_set_error('smtp_port', t('You need to enter a valid SMTP port number.'));
+      form_set_error('smtp_port', t('You must enter a valid SMTP port number.'));
     }
   }
 }
@@ -165,14 +182,33 @@ function phpmailer_settings_form_validate($form, &$form_state) {
  * @see phpmailer_settings_form()
  */
 function phpmailer_settings_form_submit($form, &$form_state) {
+  // Enable/disable mail sending subsystem.
   if ($form_state['values']['smtp_on']) {
     if (!phpmailer_enabled()) {
       variable_set('smtp_library', drupal_get_filename('module', 'phpmailer'));
+      drupal_set_message(t('PHPMailer has been enabled.'));
+      watchdog('phpmailer', 'PHPMailer has been enabled.');
     }
   }
+  else if (phpmailer_enabled()) {
+    variable_del('smtp_library');
+    drupal_set_message(t('PHPMailer has been disabled.'));
+    watchdog('phpmailer', 'PHPMailer has been disabled.');
+  }
+
+  // Log configuration changes.
+  $settings = array('host', 'port', 'protocol', 'username');
+  // Ignore empty passwords if hide password is active.
+  if (variable_get('smtp_hide_password', 0) && $form_state['values']['smtp_password'] == '') {
+    unset($form_state['values']['smtp_password']);
+  }
   else {
-    if (phpmailer_enabled()) {
-      variable_del('smtp_library');
+    $settings[] = 'password';
+  }
+  foreach ($settings as $setting) {
+    if ($form_state['values']['smtp_'. $setting] != variable_get('smtp_'. $setting, '')) {
+      watchdog('phpmailer', 'SMTP configuration changed.');
+      break;
     }
   }
 }
