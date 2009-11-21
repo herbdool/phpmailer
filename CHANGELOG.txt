@@ -6,7 +6,7 @@ by smk-ka: Improved error handling.
 by smk-ka: Fixed PHP warning on Mime Mail settings page.
 by smk-ka: Improved usability: provide next steps during installation.
 #634868 by smk-ka: Fixed bad e-mail addresses in sent mails if display names
- containes a comma.
+ contains a comma.
 #491658 by a_c_m, smk-ka: Setting FromName also for Mime Mail messages.
 #499824, #551004 by smk-ka: Added support for PHPMailer's exception handling
  to avoid dumping errors to the browser (since 5.0.0).
