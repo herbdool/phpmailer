@@ -23,7 +23,7 @@ function phpmailer_menu() {
     'description' => 'Configure PHPMailer settings.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('phpmailer_settings_form'),
-    'access callback' => 'phpmailer_settings_access',
+    'access arguments' => array('administer phpmailer settings'),
     'file' => 'phpmailer.admin.inc',
   );
   $items['phpmailer/preview'] = array(
@@ -34,6 +34,17 @@ function phpmailer_menu() {
     'type' => MENU_CALLBACK,
   );
   return $items;
+}
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function phpmailer_menu_alter(&$items) {
+  // Hide the settings page menu item if Mime Mail is enabled, but still allow
+  // accessing the URL for usability reasons.
+  if (module_exists('mimemail')) {
+    $items['admin/settings/phpmailer']['_visible'] = FALSE;
+  }
 }
 
 /**
@@ -156,16 +167,6 @@ function _phpmailer_stack($string = NULL) {
 }
 
 /**
- * Menu access callback; Block access to settings page if Mime Mail module is enabled.
- */
-function phpmailer_settings_access() {
-  if (module_exists('mimemail')) {
-    return FALSE;
-  }
-  return user_access('administer phpmailer settings');
-}
-
-/**
  * Menu access callback; Determine access for HTML mail preview page.
  */
 function phpmailer_preview_access() {
@@ -185,7 +186,7 @@ function phpmailer_disable() {
   }
   if (module_exists('mimemail') && variable_get('mimemail_engine', 'mimemail') == 'phpmailer') {
     variable_del('mimemail_engine');
-    drupal_set_message(t('MimeMail e-mail engine has been reset.'), 'warning');
+    drupal_set_message(t('MimeMail e-mail engine has been reset to default.'), 'warning');
   }
 }
 

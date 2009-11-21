@@ -7,13 +7,20 @@
  */
 
 /**
- * Form builder for both the Mime Mail hook and our own menu callback.
+ * Form builder for both the Mime Mail settings and our own settings page.
  *
  * @ingroup forms
  * @see phpmailer_settings_form_validate()
  * @see phpmailer_settings_form_submit()
  */
 function phpmailer_settings_form() {
+  if (module_exists('mimemail') && $_GET['q'] == 'admin/settings/phpmailer') {
+    // Redirect to Mime Mail settings page instead.
+    drupal_goto('admin/settings/mimemail');
+  }
+
+  // Only enable the 'send all e-mails' option if Mime Mail is not configured
+  // the same (mimemail_alter is the counterpart to smtp_on).
   if (!module_exists('mimemail') || !variable_get('mimemail_alter', 0)) {
     $form['smtp_on'] = array(
       '#type' => 'checkbox',
@@ -186,7 +193,7 @@ function phpmailer_settings_form_submit($form, &$form_state) {
   if ($form_state['values']['smtp_on']) {
     if (!phpmailer_enabled()) {
       variable_set('smtp_library', drupal_get_filename('module', 'phpmailer'));
-      drupal_set_message(t('PHPMailer has been enabled.'));
+      drupal_set_message(t('PHPMailer will be used to deliver all site e-mails.'));
       watchdog('phpmailer', 'PHPMailer has been enabled.');
     }
   }

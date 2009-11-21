@@ -40,6 +40,14 @@ function phpmailer_requirements($phase) {
 }
 
 /**
+ * Implementation of hook_install().
+ */
+function phpmailer_install() {
+  $t = get_t();
+  drupal_set_message($t('PHPMailer has been installed. Continue with <a href="@settings-url">configuring your SMTP server settings</a>.', array('@settings-url' => url('admin/settings/phpmailer'))));
+}
+
+/**
  * Implementation of hook_uninstall().
  */
 function phpmailer_uninstall() {
