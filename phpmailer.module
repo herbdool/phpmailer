@@ -176,6 +176,16 @@ function phpmailer_preview_access() {
 }
 
 /**
+ * Implementation of hook_enable().
+ */
+function phpmailer_enable() {
+  if (!phpmailer_enabled() && !(module_exists('mimemail') && variable_get('mimemail_engine', 'mimemail') == 'phpmailer')) {
+    $t = get_t();
+    drupal_set_message($t('PHPMailer has been installed, but is currently disabled. <a href="@settings-url">Configure it now</a>.', array('@settings-url' => url('admin/settings/phpmailer'))));
+  }
+}
+
+/**
  * Implementation of hook_disable().
  */
 function phpmailer_disable() {
