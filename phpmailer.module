@@ -3,8 +3,7 @@
 
 /**
  * @file
- * Integrates PHPMailer with Drupal, both as native drupal_mail() wrapper, and
- * as part of the Mime Mail module.
+ * Integrates the PHPMailer library for SMTP e-mail delivery.
  */
 
 /**

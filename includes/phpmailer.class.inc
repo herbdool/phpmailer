@@ -22,7 +22,7 @@ class DrupalPHPMailer extends PHPMailer {
    * Constructor.
    */
   public function __construct() {
-    // Throw exceptions instead of echoing error messages (since 5.0.0).
+    // Throw exceptions instead of dying (since 5.0.0).
     parent::__construct(TRUE);
 
     $this->IsSMTP();
@@ -48,7 +48,10 @@ class DrupalPHPMailer extends PHPMailer {
   }
 
   /**
-   * Wrapper around PHPMailer::Send() that properly handles exceptions.
+   * Create the message and send it.
+   *
+   * Wrapper around PHPMailer::Send() that catches any error messages and
+   * passes them to Drupal.
    */
   public function Send() {
     try {
@@ -92,6 +95,7 @@ class DrupalPHPMailer extends PHPMailer {
    * Destructor.
    */
   public function __destruct() {
+    // Required when using SMTP keep-alive.
     $this->SmtpClose();
   }
 
