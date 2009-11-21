@@ -61,8 +61,8 @@ function phpmailer_form_mimemail_admin_settings_alter(&$form, &$form_state) {
   }
   // Run our own validation and submit handler before Mime Mail to be able to
   // detect configuration changes.
-  $form['#validate'] = array_merge(array('phpmailer_settings_form_validate'), $form['#validate']);
-  $form['#submit'] = array_merge(array('phpmailer_settings_form_submit'), $form['#submit']);
+  $form['#validate'] = array_merge(array('phpmailer_settings_form_validate'), (array)$form['#validate']);
+  $form['#submit'] = array_merge(array('phpmailer_settings_form_submit'), (array)$form['#submit']);
 }
 
 /**
