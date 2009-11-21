@@ -1,9 +1,0 @@
-/* $Id$ */
-
-Copy the downloaded files
-
-  class.phpmailer.php
-  class.smtp.php
-
-into this directory.
-
