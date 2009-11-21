@@ -6,8 +6,6 @@
  * Implements the base PHPMailer for Drupal class.
  */
 
-module_load_include('php', 'phpmailer', 'phpmailer/class.phpmailer');
-
 /**
  * Base PHPMailer for Drupal implementation with support for SMTP keep-alive
  * and setting a custom Return-Path.

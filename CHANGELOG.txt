@@ -1,7 +1,8 @@
 // $Id$
 
-PHPMailer 6.x-2.x, xxxx-xx-xx
+PHPMailer 6.x-3.x, xxxx-xx-xx
 -----------------------------
+#563112 by markus_petrux: Added support for Libraries API.
 by smk-ka: Improved error handling.
 by smk-ka: Fixed PHP warning on Mime Mail settings page.
 by smk-ka: Improved usability: provide next steps during installation.

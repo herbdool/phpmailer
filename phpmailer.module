@@ -200,3 +200,25 @@ function phpmailer_disable() {
   }
 }
 
+/**
+ * Load PHPMailer class from libraries path.
+ */
+function phpmailer_load_library() {
+  if (!class_exists('PHPMailer')) {
+    $phpmailer_library = './'. libraries_get_path('phpmailer') .'/class.phpmailer.php';
+    if (!file_exists($phpmailer_library)) {
+      // Provide backwards compatibility for existing installations of
+      // PHPMailer module.
+      $phpmailer_library = './'. drupal_get_path('module', 'phpmailer') .'/phpmailer/class.phpmailer.php';
+      if (!file_exists($phpmailer_library)) {
+        watchdog('phpmailer', 'Could not load PHPMailer library.', array(), WATCHDOG_ERROR);
+        return FALSE;
+      }
+    }
+    require_once $phpmailer_library;
+  }
+  if (!class_exists('DrupalPHPMailer')) {
+    module_load_include('inc', 'phpmailer', 'includes/phpmailer.class');
+  }
+  return TRUE;
+}

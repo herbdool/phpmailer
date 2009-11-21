@@ -6,8 +6,6 @@
  * Implements PHPMailer support on behalf of Mime Mail module.
  */
 
-module_load_include('inc', 'phpmailer', 'includes/phpmailer.class');
-
 /**
  * Send out an e-mail.
  *
@@ -18,6 +16,9 @@ function mimemail_phpmailer_send($message) {
   static $mail;
 
   if (!isset($mail)) {
+    if (!phpmailer_load_library()) {
+      return FALSE;
+    }
     $mail = new DrupalPHPMailer();
     // Keep linefeed style in sync.
     $mail->LE = variable_get('mimemail_crlf', "\n");

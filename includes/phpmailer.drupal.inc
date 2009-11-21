@@ -6,8 +6,6 @@
  * Implements PHPMailer support on behalf of Drupal core.
  */
 
-module_load_include('inc', 'phpmailer', 'includes/phpmailer.class');
-
 /**
  * Send out an e-mail.
  *
@@ -18,6 +16,9 @@ function phpmailer_send($message) {
   static $mail;
 
   if (!isset($mail)) {
+    if (!phpmailer_load_library()) {
+      return FALSE;
+    }
     $mail = new DrupalPHPMailer();
   }
 

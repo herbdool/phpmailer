@@ -14,6 +14,9 @@ To submit bug reports and feature suggestions, or to track changes:
 
 * Access to an SMTP server
 
+* Libraries API module
+  http://drupal.org/project/libraries
+
 * PHPMailer for PHP5/6
   http://phpmailer.codeworxtech.com
 
@@ -35,13 +38,21 @@ Optional:
 
      http://sourceforge.net/projects/phpmailer/files/phpmailer%20for%20php5_6/
 
-   and extract the the following files to the subdirectory 'phpmailer' of this
-   module:
+   and extract the following files to the phpmailer subdirectory of your
+   libraries directory:
 
      class.phpmailer.php
      class.smtp.php
- 
+
    Be careful NOT to extract the path names contained in the archive.
+
+   It is recommended that you create your libraries directory at one of the
+   following locations:
+
+     sites/all/libraries
+     sites/<domain>/libraries
+
+   Consult the Libraries API documentation for further information.
 
 2. Install as usual, see http://drupal.org/node/70151 for further information.
 
