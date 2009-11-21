@@ -2,6 +2,7 @@
 
 PHPMailer 6.x-2.x, xxxx-xx-xx
 -----------------------------
+by smk-ka: Improved error handling.
 by smk-ka: Fixed PHP warning on Mime Mail settings page.
 by smk-ka: Improved usability: provide next steps during installation.
 #634868 by smk-ka: Fixed bad e-mail addresses in sent mails if display names

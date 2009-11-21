@@ -60,8 +60,43 @@ class DrupalPHPMailer extends PHPMailer {
     catch (phpmailerException $e) {
       // Provide a more helpful error message.
       drupal_set_message(t('Sending of at least one e-mail failed. The error returned was:<br />@error.', array('@error' => $e->getMessage())), 'error');
+      watchdog('phpmailer', $e->getMessage(), NULL, WATCHDOG_ERROR);
       $result = FALSE;
     }
+    return $result;
+  }
+
+  /**
+   * Send mail via SMTP.
+   *
+   * Wrapper around PHPMailer::SmtpSend() that resets mail properties to their
+   * defaults after sending and passes any error messages to Drupal.
+   */
+  public function SmtpSend($header, $body) {
+    if ($this->SMTPDebug) {
+      ob_start();
+    }
+
+    try {
+      $result = parent::SmtpSend($header, $body);
+    }
+    catch (phpmailerException $e) {
+      // Provide a more helpful error message.
+      drupal_set_message(t('Sending of at least one e-mail failed. The error returned was:<br />@error.', array('@error' => $e->getMessage())), 'error');
+      watchdog('phpmailer', $e->getMessage(), NULL, WATCHDOG_ERROR);
+      $result = FALSE;
+    }
+
+    if ($this->SMTPDebug) {
+      if ($debug = ob_get_contents()) {
+        drupal_set_message($debug);
+      }
+      ob_end_clean();
+    }
+
+    // Reinitialize properties.
+    $this->Reset();
+
     return $result;
   }
 
@@ -100,16 +135,6 @@ class DrupalPHPMailer extends PHPMailer {
   }
 
   /**
-   * Public wrapper around PHPMailer::SmtpSend().
-   */
-  public function SmtpSend($header, $body) {
-    $result = parent::SmtpSend($header, $body);
-    // Reinitialize properties.
-    $this->Reset();
-    return $result;
-  }
-
-  /**
    * Provide more user-friendly error messages.
    *
    * Note: messages should not end with a dot.
@@ -125,8 +150,8 @@ class DrupalPHPMailer extends PHPMailer {
       'authenticate'        => t('SMTP error: could not authenticate'),
       'smtp_connect_failed' => t('SMTP error: could not connect to SMTP host'),
       'connect_host'        => t('SMTP error: could not connect to SMTP host'),
-      'from_failed'         => t('The following sender failed: '), // non-admin
-      'recipients_failed'   => t('The following recipients failed: '), // non-admin
+      'from_failed'         => t('The following sender address failed: '), // non-admin
+      'recipients_failed'   => t('The following recipient addresses failed: '), // non-admin
       'data_not_accepted'   => t('SMTP error: data not accepted'),
       'smtp_error'          => t('SMTP server error: '),
 

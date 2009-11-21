@@ -57,10 +57,6 @@ function mimemail_phpmailer_send($message) {
   }
   unset($message['headers']['CC'], $message['headers']['BCC']);
 
-  if ($mail->SMTPDebug) {
-    ob_start();
-  }
-
   $message['headers']['Date'] = $mail->RFCDate();
   if ($message['address']) {
     $message['headers']['To'] = $message['address'];
@@ -72,17 +68,6 @@ function mimemail_phpmailer_send($message) {
 //  }
   $header = mimemail_rfc_headers($message['headers']) . $mail->LE . $mail->LE;
 
-  if (!($result = $mail->SmtpSend($header, $message['body']))) {
-    watchdog('phpmailer', $mail->ErrorInfo, NULL, WATCHDOG_ERROR);
-  }
-
-  if ($mail->SMTPDebug) {
-    if ($debug = ob_get_contents()) {
-      drupal_set_message($debug);
-    }
-    ob_end_clean();
-  }
-
-  return $result;
+  return $mail->SmtpSend($header, $message['body']);
 }
 

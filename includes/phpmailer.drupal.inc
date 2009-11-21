@@ -108,21 +108,6 @@ function phpmailer_send($message) {
   $mail->Subject = $message['subject'];
   $mail->Body = $message['body'];
 
-  if ($mail->SMTPDebug) {
-    ob_start();
-  }
-
-  if (!($result = $mail->Send())) {
-    watchdog('phpmailer', $mail->ErrorInfo, NULL, WATCHDOG_ERROR);
-  }
-
-  if ($mail->SMTPDebug) {
-    if ($debug = ob_get_contents()) {
-      drupal_set_message($debug);
-    }
-    ob_end_clean();
-  }
-
-  return $result;
+  return $mail->Send();
 }
 
