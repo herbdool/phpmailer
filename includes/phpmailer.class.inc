@@ -46,29 +46,9 @@ class DrupalPHPMailer extends PHPMailer {
   }
 
   /**
-   * Create the message and send it.
-   *
-   * Wrapper around PHPMailer::Send() that catches any error messages and
-   * passes them to Drupal.
-   */
-  public function Send() {
-    try {
-      $result = parent::Send();
-    }
-    catch (phpmailerException $e) {
-      // Provide a more helpful error message.
-      drupal_set_message(t('Sending of at least one e-mail failed. The error returned was:<br />@error.', array('@error' => $e->getMessage())), 'error');
-      watchdog('phpmailer', $e->getMessage(), NULL, WATCHDOG_ERROR);
-      $result = FALSE;
-    }
-    return $result;
-  }
-
-  /**
    * Send mail via SMTP.
    *
-   * Wrapper around PHPMailer::SmtpSend() that resets mail properties to their
-   * defaults after sending and passes any error messages to Drupal.
+   * Wrapper around PHPMailer::SmtpSend() with exception handling.
    */
   public function SmtpSend($header, $body) {
     if ($this->SMTPDebug) {
@@ -78,12 +58,7 @@ class DrupalPHPMailer extends PHPMailer {
     try {
       $result = parent::SmtpSend($header, $body);
     }
-    catch (phpmailerException $e) {
-      // Provide a more helpful error message.
-      drupal_set_message(t('Sending of at least one e-mail failed. The error returned was:<br />@error.', array('@error' => $e->getMessage())), 'error');
-      watchdog('phpmailer', $e->getMessage(), NULL, WATCHDOG_ERROR);
-      $result = FALSE;
-    }
+    catch (phpmailerException $e) {}
 
     if ($this->SMTPDebug) {
       if ($debug = ob_get_contents()) {
@@ -95,6 +70,10 @@ class DrupalPHPMailer extends PHPMailer {
     // Reinitialize properties.
     $this->Reset();
 
+    if (isset($e)) {
+      // Pass exception to caller.
+      throw $e;
+    }
     return $result;
   }
 
