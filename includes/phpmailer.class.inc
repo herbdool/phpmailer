@@ -42,7 +42,7 @@ class DrupalPHPMailer extends PHPMailer {
     $this->SMTPDebug = variable_get('smtp_debug', 0);
 
     // Adjust path to SMTP class.
-    $this->PluginDir = drupal_get_path('module', 'phpmailer') . '/phpmailer/';
+    $this->PluginDir = './' . libraries_get_path('phpmailer') . '/';
   }
 
   /**
