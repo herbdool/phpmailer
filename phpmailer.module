@@ -205,20 +205,30 @@ function phpmailer_disable() {
  */
 function phpmailer_load_library() {
   if (!class_exists('PHPMailer')) {
-    $phpmailer_library = './'. libraries_get_path('phpmailer') .'/class.phpmailer.php';
-    if (!file_exists($phpmailer_library)) {
-      // Provide backwards compatibility for existing installations of
-      // PHPMailer module.
-      $phpmailer_library = './'. drupal_get_path('module', 'phpmailer') .'/phpmailer/class.phpmailer.php';
-      if (!file_exists($phpmailer_library)) {
-        watchdog('phpmailer', 'Could not load PHPMailer library.', array(), WATCHDOG_ERROR);
-        return FALSE;
-      }
+    if (!($library_path = phpmailer_get_path())) {
+      watchdog('phpmailer', 'Could not load PHPMailer library.', array(), WATCHDOG_ERROR);
+      return FALSE;
     }
-    require_once $phpmailer_library;
+    require_once './'. $library_path .'/class.phpmailer.php';
   }
   if (!class_exists('DrupalPHPMailer')) {
     module_load_include('inc', 'phpmailer', 'includes/phpmailer.class');
   }
   return TRUE;
+}
+
+/**
+ * Get path to PHPMailer library.
+ */
+function phpmailer_get_path() {
+  $library_path = libraries_get_path('phpmailer');
+  if (!file_exists('./'. $library_path .'/class.phpmailer.php')) {
+    // Provide backwards compatibility for existing installations of
+    // PHPMailer module.
+    $library_path = drupal_get_path('module', 'phpmailer') .'/phpmailer';
+    if (!file_exists('./'. $library_path .'/class.phpmailer.php')) {
+      return FALSE;
+    }
+  }
+  return $library_path;
 }

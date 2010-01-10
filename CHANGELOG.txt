@@ -2,7 +2,7 @@
 
 PHPMailer 6.x-3.x, xxxx-xx-xx
 -----------------------------
-#642138 by Zoltok, sun: Fixed wrong path to class.smtp.php.
+#642138 by Zoltok, sun, smk-ka: Fixed wrong path to class.smtp.php.
 #563112 by markus_petrux: Added support for Libraries API.
 by smk-ka: Improved error handling.
 by smk-ka: Fixed PHP warning on Mime Mail settings page.
