@@ -21,7 +21,9 @@ class DrupalPHPMailer extends PHPMailer {
    */
   public function __construct() {
     // Throw exceptions instead of dying (since 5.0.0).
-    parent::__construct(TRUE);
+    if (method_exists(get_parent_class($this), '__construct')) {
+      parent::__construct(TRUE);
+    }
 
     $this->IsSMTP();
     $this->Reset();
