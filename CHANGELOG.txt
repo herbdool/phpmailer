@@ -30,6 +30,8 @@ by smk-ka: Provide more user-friendly error messages.
 #633278 by smk-ka: Increased security: added an option to hide the password on
  the settings page and added a log message if the configuration changed.
 #686994 by sun, smk-ka: Restored compatibility with PHPMailer 2.x library.
+#675388 by smk-ka: Fixed unrecognized character in regular expression for PHP
+ versions < 5.2.2.
 
 
 PHPMailer 6.x-2.1, 2009-06-10

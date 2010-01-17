@@ -131,7 +131,7 @@ function phpmailer_parse_address($string) {
   $ipv4 = '[0-9]{1,3}(?:\.[0-9]{1,3}){3}';
   $ipv6 = '[0-9a-fA-F]{1,4}(?:\:[0-9a-fA-F]{1,4}){7}';
   $address = "$user@(?:$domain|(?:\[(?:$ipv4|$ipv6)\]))";
-  $adr_rx = "/^(?<name>.*)\s<(?<address>$address)>$/";
+  $adr_rx = "/^(?P<name>.*)\s<(?P<address>$address)>$/";
 
   // Split string into multiple parts and process each.
   foreach (explode(',', $string) as $email) {
