@@ -82,11 +82,11 @@ Optional:
     Username:        your_google_mail_name@gmail.com
     Password:        your_google_mail_password
 
-  Note however, that Google automatically rewrites the "from" line of any e-mail
-  you send via their SMTP gateway to your Google Mail address.  Also note the
-  sending limits [1] for Google Mail accounts.
+  In Advanced SMTP settings:
+    Enable 'Always set "Reply-To" address' checkbox.
 
-  [1] http://mail.google.com/support/bin/answer.py?hl=en&answer=22839
+  Also note the sending limits for Google Mail accounts:
+  http://mail.google.com/support/bin/answer.py?hl=en&answer=22839
 
 * Debug settings
 

@@ -119,6 +119,12 @@ function phpmailer_settings_form() {
     '#default_value' => variable_get('smtp_fromname', ''),
     '#description' => t('Enter a name that should appear as the sender for all messages.  If left blank the site name will be used instead: %sitename.', array('%sitename' => variable_get('site_name', 'Drupal'))),
   );
+  $form['advanced']['smtp_always_replyto'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Always set "Reply-To" address'),
+    '#default_value' => variable_get('smtp_always_replyto', 0),
+    '#description' => t('Enables setting the "Reply-To" address to the original sender of the message, if unset.  This is required when using Google Mail, which would otherwise overwrite the original sender.'),
+  );
   $form['advanced']['smtp_keepalive'] = array(
     '#type' => 'checkbox',
     '#title' => t('Keep connection alive'),

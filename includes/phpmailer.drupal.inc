@@ -24,10 +24,10 @@ function phpmailer_send($message) {
 
   try {
     // Parse 'From' e-mail address.
-    $address = phpmailer_parse_address($message['from']);
-    $mail->From = $address[0]['mail'];
-    if ($address[0]['name'] != '') {
-      $mail->FromName = $address[0]['name'];
+    $from = reset(phpmailer_parse_address($message['from']));
+    $mail->From = $from['mail'];
+    if ($from['name'] != '') {
+      $mail->FromName = $from['name'];
     }
     unset($message['headers']['From']);
 
@@ -60,6 +60,11 @@ function phpmailer_send($message) {
         $mail->AddReplyTo($address['mail'], $address['name']);
       }
       unset($message['headers']['Reply-To']);
+    }
+    elseif (variable_get('smtp_always_replyto', FALSE)) {
+      // If no Reply-To header has been explicitly set, use the From address to
+      // be able to respond to e-mails sent via Google Mail.
+      $mail->AddReplyTo($from['mail'], $from['name']);
     }
 
     // Extract Content-Type and charset.

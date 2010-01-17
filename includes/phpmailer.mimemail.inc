@@ -29,11 +29,11 @@ function mimemail_phpmailer_send($message) {
     // Display names are usually not required. Leave header intact.
 
     // Parse 'From' e-mail address.
-    $address = phpmailer_parse_address($message['sender']);
-    if ($address[0]['name'] != '') {
-      $mail->FromName = $address[0]['name'];
+    $from = reset(phpmailer_parse_address($message['sender']));
+    $mail->From = $from['mail'];
+    if ($from['name'] != '') {
+      $mail->FromName = $from['name'];
     }
-    $mail->From = $address[0]['mail'];
 
     if (variable_get('phpmailer_debug_email', '') === '') {
       // Set recipients.
@@ -63,6 +63,12 @@ function mimemail_phpmailer_send($message) {
 
     if ($message['address']) {
       $message['headers']['To'] = $message['address'];
+    }
+
+    // If no Reply-To header has been explicitly set, use the From address to be
+    // able to respond to e-mails sent via Google Mail.
+    if (!isset($message['headers']['Reply-To']) && variable_get('smtp_always_replyto', FALSE)) {
+      $message['headers']['Reply-To'] = $from['mail'];
     }
 
     $message['headers']['Subject'] = $message['subject'];
