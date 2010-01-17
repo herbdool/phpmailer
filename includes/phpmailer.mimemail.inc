@@ -26,7 +26,7 @@ function mimemail_phpmailer_send($message) {
 
   try {
     // Extract and assign e-mail addresses required for SMTP.
-    // Display names are not required. Leave header intact.
+    // Display names are usually not required. Leave header intact.
 
     // Parse 'From' e-mail address.
     $address = phpmailer_parse_address($message['sender']);
@@ -60,14 +60,18 @@ function mimemail_phpmailer_send($message) {
     unset($message['headers']['CC'], $message['headers']['BCC']);
 
     $message['headers']['Date'] = $mail->RFCDate();
+
     if ($message['address']) {
       $message['headers']['To'] = $message['address'];
     }
+
     $message['headers']['Subject'] = $message['subject'];
+
     // FIXME SpamAssassin says INVALID_MSGID to PHPMailer's generated Message-ID. 06/04/2009 smk
 //    if (!isset($message['headers']['Message-ID'])) {
 //      $message['headers']['Message-ID'] = sprintf("<%s@%s>", md5(uniqid(time())), $mail->ServerHostname());
 //    }
+
     $header = mimemail_rfc_headers($message['headers']) . $mail->LE . $mail->LE;
 
     return $mail->SmtpSend($header, $message['body']);

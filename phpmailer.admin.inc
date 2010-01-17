@@ -63,7 +63,7 @@ function phpmailer_settings_form() {
     '#title' => t('Use secure protocol'),
     '#default_value' => variable_get('smtp_protocol', ''),
     '#options' => array('' => t('No'), 'ssl' => t('SSL'), 'tls' => t('TLS')),
-    '#description' => t('Whether to use an encrypted connection to communicate with the SMTP server.  Google Mail requires %SSL.', array('%SSL' => 'SSL')),
+    '#description' => t('Whether to use an encrypted connection to communicate with the SMTP server.  Google Mail requires SSL.'),
   );
   if (!function_exists('openssl_open')) {
     $form['server']['smtp_protocol']['#default_value'] = '';
@@ -113,17 +113,17 @@ function phpmailer_settings_form() {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
-  $form['advanced']['smtp_keepalive'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Keep connection alive'),
-    '#default_value' => variable_get('smtp_keepalive', 0),
-    '#description' => t('Whether to reuse an existing connection during a request.  Improves performance when sending a lot of e-mails at once.'),
-  );
   $form['advanced']['smtp_fromname'] = array(
     '#type' => 'textfield',
     '#title' => t('"From" name'),
     '#default_value' => variable_get('smtp_fromname', ''),
     '#description' => t('Enter a name that should appear as the sender for all messages.  If left blank the site name will be used instead: %sitename.', array('%sitename' => variable_get('site_name', 'Drupal'))),
+  );
+  $form['advanced']['smtp_keepalive'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Keep connection alive'),
+    '#default_value' => variable_get('smtp_keepalive', 0),
+    '#description' => t('Whether to reuse an existing connection during a request.  Improves performance when sending a lot of e-mails at once.'),
   );
   $form['advanced']['smtp_debug'] = array(
     '#type' => 'select',
@@ -134,9 +134,9 @@ function phpmailer_settings_form() {
   );
 
   // Send a test email message if an address has been entered.
-  if ($test_address = variable_get('smtp_test_address', '')) {
+  if ($test_address = variable_get('phpmailer_test', '')) {
     // Delete first to avoid unintended resending in case of an error.
-    variable_del('smtp_test_address');
+    variable_del('phpmailer_test');
     drupal_mail('phpmailer', 'test', $test_address, NULL);
     drupal_set_message(t('A test e-mail has been sent to %email. <a href="@watchdog-url">Check the logs</a> for any error messages.', array('%email' => $test_address, '@watchdog-url' => url('admin/reports/dblog'))));
   }
@@ -147,7 +147,7 @@ function phpmailer_settings_form() {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
-  $form['test']['smtp_test_address'] = array(
+  $form['test']['phpmailer_test'] = array(
     '#type' => 'textfield',
     '#title' => t('Recipient'),
     '#default_value' => '',
