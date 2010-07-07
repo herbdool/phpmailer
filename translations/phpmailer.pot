@@ -3,17 +3,19 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  phpmailer.admin.inc,v 1.15.2.2 2009/11/21 17:17:42 smk
-#  phpmailer.module,v 1.11.2.6 2009/11/21 18:49:29 smk
-#  phpmailer.info,v 1.4.2.1 2009/11/21 17:23:47 smk
-#  phpmailer.install,v 1.3.2.2 2009/11/21 18:49:29 smk
-#  phpmailer.class.inc,v 1.13.2.3 2009/11/21 17:27:02 smk
+#  phpmailer.admin.inc,v 1.17.2.2 2010/01/17 18:04:29 smk
+#  phpmailer.module,v 1.19.2.3 2010/01/17 15:44:28 smk
+#  phpmailer.info,v 1.6 2009/11/21 19:05:37 smk
+#  phpmailer.install,v 1.6.2.1 2010/07/07 12:45:04 smk
+#  phpmailer.class.inc,v 1.17.2.5 2010/07/07 12:41:38 smk
+#  phpmailer.drupal.inc,v 1.11.2.2 2010/01/17 18:04:30 smk
+#  phpmailer.mimemail.inc,v 1.8.2.3 2010/01/17 18:04:30 smk
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-11-21 19:53+0100\n"
+"POT-Creation-Date: 2010-07-07 13:28-0100\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -71,7 +73,7 @@ msgid "TLS"
 msgstr ""
 
 #: phpmailer.admin.inc:66
-msgid "Whether to use an encrypted connection to communicate with the SMTP server.  Google Mail requires %SSL."
+msgid "Whether to use an encrypted connection to communicate with the SMTP server.  Google Mail requires SSL."
 msgstr ""
 
 #: phpmailer.admin.inc:71
@@ -119,98 +121,106 @@ msgid "Advanced SMTP settings"
 msgstr ""
 
 #: phpmailer.admin.inc:118
-msgid "Keep connection alive"
-msgstr ""
-
-#: phpmailer.admin.inc:120
-msgid "Whether to reuse an existing connection during a request.  Improves performance when sending a lot of e-mails at once."
-msgstr ""
-
-#: phpmailer.admin.inc:124
 msgid "\"From\" name"
 msgstr ""
 
-#: phpmailer.admin.inc:126
+#: phpmailer.admin.inc:120
 msgid "Enter a name that should appear as the sender for all messages.  If left blank the site name will be used instead: %sitename."
 msgstr ""
 
+#: phpmailer.admin.inc:124
+msgid "Always set \"Reply-To\" address"
+msgstr ""
+
+#: phpmailer.admin.inc:126
+msgid "Enables setting the \"Reply-To\" address to the original sender of the message, if unset.  This is required when using Google Mail, which would otherwise overwrite the original sender."
+msgstr ""
+
 #: phpmailer.admin.inc:130
+msgid "Keep connection alive"
+msgstr ""
+
+#: phpmailer.admin.inc:132
+msgid "Whether to reuse an existing connection during a request.  Improves performance when sending a lot of e-mails at once."
+msgstr ""
+
+#: phpmailer.admin.inc:136
 msgid "Debug level"
 msgstr ""
 
-#: phpmailer.admin.inc:132
+#: phpmailer.admin.inc:138
 msgid "Disabled"
 msgstr ""
 
-#: phpmailer.admin.inc:132
+#: phpmailer.admin.inc:138
 msgid "Errors only"
 msgstr ""
 
-#: phpmailer.admin.inc:132
+#: phpmailer.admin.inc:138
 msgid "Server responses"
 msgstr ""
 
-#: phpmailer.admin.inc:132
+#: phpmailer.admin.inc:138
 msgid "Full communication"
 msgstr ""
 
-#: phpmailer.admin.inc:133
+#: phpmailer.admin.inc:139
 msgid "Debug the communication with the SMTP server.  You normally shouldn't enable this unless you're trying to debug e-mail sending problems."
 msgstr ""
 
-#: phpmailer.admin.inc:141
+#: phpmailer.admin.inc:147
 msgid "A test e-mail has been sent to %email. <a href=\"@watchdog-url\">Check the logs</a> for any error messages."
 msgstr ""
 
-#: phpmailer.admin.inc:146
+#: phpmailer.admin.inc:152
 msgid "Test configuration"
 msgstr ""
 
-#: phpmailer.admin.inc:152
+#: phpmailer.admin.inc:158
 msgid "Recipient"
 msgstr ""
 
-#: phpmailer.admin.inc:154
+#: phpmailer.admin.inc:160
 msgid "Type in an address to have a test e-mail sent there."
 msgstr ""
 
-#: phpmailer.admin.inc:159
+#: phpmailer.admin.inc:165
 msgid "Preview"
 msgstr ""
 
-#: phpmailer.admin.inc:160
+#: phpmailer.admin.inc:166
 msgid "For theming of HTML mails sent via Mime Mail, you can <a href=\"@preview-url\" target=\"_blank\">preview an example mail</a>."
 msgstr ""
 
-#: phpmailer.admin.inc:181
+#: phpmailer.admin.inc:187
 msgid "You must enter a valid SMTP port number."
 msgstr ""
 
-#: phpmailer.admin.inc:196
+#: phpmailer.admin.inc:202
 msgid "PHPMailer will be used to deliver all site e-mails."
 msgstr ""
 
-#: phpmailer.admin.inc:202;203 phpmailer.module:194
+#: phpmailer.admin.inc:208;209 phpmailer.module:195
 msgid "PHPMailer has been disabled."
 msgstr ""
 
-#: phpmailer.admin.inc:227
+#: phpmailer.admin.inc:233
 msgid "PHPMailer test e-mail"
 msgstr ""
 
-#: phpmailer.admin.inc:228
+#: phpmailer.admin.inc:234
 msgid "Your site is properly configured to send e-mails using the PHPMailer library."
 msgstr ""
 
-#: phpmailer.admin.inc:197;203;217
+#: phpmailer.admin.inc:203;209;223 phpmailer.module:209;0
 msgid "phpmailer"
 msgstr ""
 
-#: phpmailer.admin.inc:197
+#: phpmailer.admin.inc:203
 msgid "PHPMailer has been enabled."
 msgstr ""
 
-#: phpmailer.admin.inc:217
+#: phpmailer.admin.inc:223
 msgid "SMTP configuration changed."
 msgstr ""
 
@@ -222,12 +232,16 @@ msgstr ""
 msgid "Mailing engine using the PHPMailer library."
 msgstr ""
 
-#: phpmailer.module:198
+#: phpmailer.module:199
 msgid "MimeMail e-mail engine has been reset to default."
 msgstr ""
 
 #: (duplicate) phpmailer.module:184 
 msgid "PHPMailer has been installed, but is currently disabled. <a href=\"@settings-url\">Configure it now</a>."
+msgstr ""
+
+#: phpmailer.module:209
+msgid "Could not load PHPMailer library."
 msgstr ""
 
 #: phpmailer.module:13
@@ -242,12 +256,16 @@ msgstr ""
 msgid "Mail preview"
 msgstr ""
 
-#: (duplicate) phpmailer.install:20 ;33 
+#: (duplicate) phpmailer.install:22 ;33 
 msgid "PHPMailer library"
 msgstr ""
 
-#: (duplicate) phpmailer.install:22 
+#: (duplicate) phpmailer.install:24 
 msgid "PHPMailer module requires the <a href=\"@phpmailer-url\">PHPMailer</a> library to properly send mail. Please download the PHPMailer package for PHP5/6, extract the archive and copy its contents to the following location: @phpmailer-path. Make sure the main PHPMailer class is located at @phpmailer-class-path."
+msgstr ""
+
+#: (duplicate) phpmailer.install:40 
+msgid "missing"
 msgstr ""
 
 #: phpmailer.info:0
@@ -258,67 +276,67 @@ msgstr ""
 msgid "Mail"
 msgstr ""
 
-#: includes/phpmailer.class.inc:62;85
-msgid "Sending of at least one e-mail failed. The error returned was:<br />@error."
-msgstr ""
-
-#: includes/phpmailer.class.inc:144
+#: includes/phpmailer.class.inc:130
 msgid "You must provide at least one recipient e-mail address"
 msgstr ""
 
-#: includes/phpmailer.class.inc:145
+#: includes/phpmailer.class.inc:131
 msgid "Unknown encoding: "
 msgstr ""
 
-#: includes/phpmailer.class.inc:146
+#: includes/phpmailer.class.inc:132
 msgid "Could not open file: "
 msgstr ""
 
-#: includes/phpmailer.class.inc:147
+#: includes/phpmailer.class.inc:133
 msgid "Signing error: "
 msgstr ""
 
-#: includes/phpmailer.class.inc:148
+#: includes/phpmailer.class.inc:134
 msgid "Message body empty"
 msgstr ""
 
-#: includes/phpmailer.class.inc:149
+#: includes/phpmailer.class.inc:135
 msgid "SMTP error: STARTTLS not accepted from server"
 msgstr ""
 
-#: includes/phpmailer.class.inc:150
+#: includes/phpmailer.class.inc:136
 msgid "SMTP error: could not authenticate"
 msgstr ""
 
-#: includes/phpmailer.class.inc:151;152
+#: includes/phpmailer.class.inc:137;138
 msgid "SMTP error: could not connect to SMTP host"
 msgstr ""
 
-#: includes/phpmailer.class.inc:153
+#: includes/phpmailer.class.inc:139
 msgid "The following sender address failed: "
 msgstr ""
 
-#: includes/phpmailer.class.inc:154
+#: includes/phpmailer.class.inc:140
 msgid "The following recipient addresses failed: "
 msgstr ""
 
-#: includes/phpmailer.class.inc:155
+#: includes/phpmailer.class.inc:141
 msgid "SMTP error: data not accepted"
 msgstr ""
 
-#: includes/phpmailer.class.inc:156
+#: includes/phpmailer.class.inc:142
 msgid "SMTP server error: "
 msgstr ""
 
-#: includes/phpmailer.class.inc:163
+#: includes/phpmailer.class.inc:149
 msgid "Could not access file: "
 msgstr ""
 
-#: includes/phpmailer.class.inc:164
+#: includes/phpmailer.class.inc:150
 msgid "Invalid address"
 msgstr ""
 
-#: includes/phpmailer.class.inc:165
+#: includes/phpmailer.class.inc:151
 msgid "Cannot set or reset variable: "
+msgstr ""
+
+#: includes/phpmailer.drupal.inc:121 includes/phpmailer.mimemail.inc:86
+msgid "Sending of at least one e-mail failed. The error returned was:<br />@error."
 msgstr ""
 
