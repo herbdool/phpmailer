@@ -38,6 +38,8 @@ by smk-ka: Provide more user-friendly error messages.
  configurations.
 by smk-ka: Fixed libraries module not loaded when checking install requirements.
 #847238 by J0nathan: Better description of debug settings in README.txt.
+#805834 by smk-ka: Added description of the most common error message to
+ README.txt.
 
 
 PHPMailer 6.x-2.1, 2009-06-10

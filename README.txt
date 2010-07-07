@@ -88,6 +88,18 @@ Optional:
   Also note the sending limits for Google Mail accounts:
   http://mail.google.com/support/bin/answer.py?hl=en&answer=22839
 
+* Errors when trying to send a test email
+
+  If you see the following error messages when trying to send a test email from
+  the settings page:
+
+    SMTP -> ERROR: Failed to connect to server: Connection timed out (110)
+    SMTP Error: Could not connect to SMTP host. 
+
+  it means the mail server can not be reached, usually because your hosting
+  provider is blocking the port by a firewall. The solution is to ask your
+  provider to allow outgoing connections to your mail server.
+
 * Debug settings
 
   PHPMailer supports rerouting all e-mails for debugging purposes, to prevent
