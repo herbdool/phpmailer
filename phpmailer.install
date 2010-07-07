@@ -15,6 +15,7 @@ function phpmailer_requirements($phase) {
   $t = get_t();
 
   if ($phase == 'install') {
+    drupal_load('module', 'libraries');
     $path = libraries_get_path('phpmailer');
     if (!file_exists('./' . $path . '/class.phpmailer.php') || !file_exists('./' . $path . '/class.smtp.php')) {
       $requirements['phpmailer'] = array(
