@@ -59,8 +59,13 @@ class DrupalPHPMailer extends PHPMailer {
 
     try {
       $result = parent::SmtpSend($header, $body);
+
+      // Close connection when not using SMTP keep-alive.
+      if (!$this->SMTPKeepAlive) {
+        $this->SmtpClose();
+      }
     }
-    catch (phpmailerException $e) {}
+    catch (phpmailerException $exception) {}
 
     if ($this->SMTPDebug) {
       if ($debug = ob_get_contents()) {
@@ -72,9 +77,9 @@ class DrupalPHPMailer extends PHPMailer {
     // Reinitialize properties.
     $this->Reset();
 
-    if (isset($e)) {
+    if (isset($exception)) {
       // Pass exception to caller.
-      throw $e;
+      throw $exception;
     }
     return $result;
   }
@@ -109,8 +114,10 @@ class DrupalPHPMailer extends PHPMailer {
    * Destructor.
    */
   public function __destruct() {
-    // Required when using SMTP keep-alive.
-    $this->SmtpClose();
+    // Be nice and close the connection when using SMTP keep-alive.
+    if ($this->SMTPKeepAlive) {
+      $this->SmtpClose();
+    }
   }
 
   /**

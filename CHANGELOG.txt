@@ -32,6 +32,10 @@ by smk-ka: Provide more user-friendly error messages.
 #686994 by sun, smk-ka: Restored compatibility with PHPMailer 2.x library.
 #675388 by smk-ka: Fixed unrecognized character in regular expression for PHP
  versions < 5.2.2.
+#607204 by dagmar, smk-ka: Fixed unable to reply to e-mails sent via Google
+ Mail. Added an option to always set a "Reply-To" address.
+#764448 by smk-ka: Fixed sending more than one message for certain server
+ configurations.
 
 
 PHPMailer 6.x-2.1, 2009-06-10
