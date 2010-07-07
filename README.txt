@@ -95,9 +95,7 @@ Optional:
   site.  To enable this feature, add the following lines to the end of your
   settings.php (usually located in sites/default):
 
-    $conf = array(
-      'phpmailer_debug_email' => 'your_debug_email@yoursite.com',
-    );
+    $conf['phpmailer_debug_email'] = 'your_debug_email@yoursite.com';
 
   This will change the recipient of all e-mails to the configured address.
 
