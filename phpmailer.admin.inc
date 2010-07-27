@@ -259,11 +259,6 @@ function phpmailer_preview() {
   // @see drupal_mail_wrapper()
   $format = variable_get('mimemail_format', FILTER_FORMAT_DEFAULT);
   $body = check_markup($body, $format, FALSE);
-  // @see mimemail()
-  foreach (module_implements('mail_alter') as $module) {
-    $function = $module .'_mail_alter';
-    $function($mailkey, $recipient, $subject, $body, $sender, $headers);
-  }
   // @see mimemail_prepare()
   $body = theme('mimemail_message', $body, $mailkey);
   foreach (module_implements('mail_post_process') as $module) {

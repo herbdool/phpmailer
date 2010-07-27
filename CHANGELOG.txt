@@ -2,6 +2,11 @@
 
 PHPMailer 6.x-3.x, xxxx-xx-xx
 -----------------------------
+by smk-ka: Removed bogus call to hook_mail_alter() from phpmailer_preview().
+
+
+PHPMailer 6.x-3.0, 2010-07-07
+-----------------------------
 #642138 by Zoltok, sun, smk-ka: Fixed wrong path to class.smtp.php.
 #563112 by markus_petrux: Added support for Libraries API.
 by smk-ka: Improved error handling.
