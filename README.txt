@@ -59,18 +59,21 @@ Optional:
 
 -- CONFIGURATION --
 
-* Configure user permissions at Administer >> User management >> Access control
-  >> phpmailer module.
+* Configure user permissions at Administer >> User management >> Access
+  control >> phpmailer module.
 
-  Only users with the "administer phpmailer settings" permission will gain
-  access to the module configuration page.
+  Only users with the "administer phpmailer settings" permission are allowed to
+  access the module configuration page.
 
-* When not using the optional Mime Mail module, customize module settings at
-  Administer >> Site configuration >> PHPMailer.
+* Configure your SMTP server settings at Administer >> Site
+  configuration >> PHPMailer.
 
   If used in conjunction with Mime Mail, PHPMailer will show up as an e-mail
-  engine in the Mime Mail module settings.  Note that there will be no separate
-  PHPMailer configuration page in this case.
+  engine in the Mime Mail module settings.  To let Mime Mail apply styles and
+  formatting to system e-mails but still use PHPMailer for mail transport,
+  uncheck "Use PHPMailer to send e-mails" first on the PHPMailer settings
+  page.  Then activate "Use mime mail for all messages" on the Mime Mail
+  settings page and choose PHPMailer from the list of available e-mail engines.
 
 * Using Google Mail as SMTP server
 
@@ -118,8 +121,4 @@ Authors:
 * Stefan M. Kudwien (smk-ka) - http://drupal.org/user/48898
 * Daniel F. Kudwien (sun) - http://drupal.org/user/54136
 
-This project has been sponsored by UNLEASHED MIND
-Specialized in consulting and planning of Drupal powered sites, UNLEASHED
-MIND offers installation, development, theming, customization, and hosting
-to get you started. Visit http://www.unleashedmind.com for more information.
-
+This project has been sponsored by UNLEASHED MIND.

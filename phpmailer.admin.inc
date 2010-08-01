@@ -14,29 +14,21 @@
  * @see phpmailer_settings_form_submit()
  */
 function phpmailer_settings_form($form_state) {
-  if (module_exists('mimemail') && $_GET['q'] == 'admin/settings/phpmailer') {
-    // Redirect to Mime Mail settings page instead.
-    drupal_goto('admin/settings/mimemail');
+  $form['smtp_on'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use PHPMailer to send e-mails'),
+    '#default_value' => variable_get('smtp_on', 0),
+    '#description' => t('When enabled, PHPMailer will be used to deliver all site e-mails.'),
+  );
+  // Only allow to send all e-mails if Mime Mail is not configured the same
+  // (mimemail_alter is the counterpart to smtp_on).
+  if (module_exists('mimemail') && variable_get('mimemail_alter', 0)) {
+    $form['smtp_on']['#disabled'] = TRUE;
+    $form['smtp_on']['#default_value'] = 0;
+    $form['smtp_on']['#description'] = t('MimeMail has been detected. To enable PHPMailer for mail transport, go to the <a href="@url">MimeMail settings page</a> and select PHPMailer from the available e-mail engines.', array('@url' => url('admin/settings/mimemail')));
   }
-
-  // Only enable the 'send all e-mails' option if Mime Mail is not configured
-  // the same (mimemail_alter is the counterpart to smtp_on).
-  if (!module_exists('mimemail') || !variable_get('mimemail_alter', 0)) {
-    $form['smtp_on'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Use PHPMailer to send e-mails'),
-      '#default_value' => variable_get('smtp_on', 0),
-      '#description' => t('When enabled, PHPMailer will be used to deliver all site e-mails.'),
-    );
-    if (!variable_get('smtp_on', 0) && empty($form_state['post']['smtp_on'])) {
-      drupal_set_message(t('PHPMailer is currently disabled.'), 'warning');
-    }
-  }
-  else {
-    $form['smtp_on'] = array(
-      '#type' => 'value',
-      '#value' => 0,
-    );
+  elseif (!variable_get('smtp_on', 0) && empty($form_state['post']['smtp_on'])) {
+    drupal_set_message(t('PHPMailer is currently disabled.'), 'warning');
   }
 
   $form['server']['smtp_host'] = array(
@@ -162,19 +154,6 @@ function phpmailer_settings_form($form_state) {
     '#default_value' => '',
     '#description' => t('Type in an address to have a test e-mail sent there.'),
   );
-  if (module_exists('mimemail')) {
-    $form['test']['preview'] = array(
-      '#type' => 'item',
-      '#title' => t('Preview'),
-      '#value' => t('For theming of HTML mails sent via Mime Mail, you can <a href="@preview-url" target="_blank">preview an example mail</a>.', array('@preview-url' => url('phpmailer/preview'))),
-    );
-  }
-
-  if (module_exists('mimemail')) {
-    return $form;
-  }
-
-  $form['#submit'] = array('phpmailer_settings_form_submit');
 
   return system_settings_form($form);
 }
@@ -239,6 +218,7 @@ function phpmailer_mail($key, &$message, $params) {
 
 /**
  * Menu callback; Render a HTML mail preview in the browser.
+ * @todo Move to Mime Mail project.
  */
 function phpmailer_preview() {
   global $user;

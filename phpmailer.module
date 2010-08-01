@@ -25,6 +25,7 @@ function phpmailer_menu() {
     'access arguments' => array('administer phpmailer settings'),
     'file' => 'phpmailer.admin.inc',
   );
+  // @todo Move to Mime Mail project.
   $items['phpmailer/preview'] = array(
     'title' => 'Mail preview',
     'page callback' => 'phpmailer_preview',
@@ -36,32 +37,24 @@ function phpmailer_menu() {
 }
 
 /**
- * Implementation of hook_menu_alter().
- */
-function phpmailer_menu_alter(&$items) {
-  // Hide the settings page menu item if Mime Mail is enabled, but still allow
-  // accessing the URL for usability reasons.
-  if (module_exists('mimemail')) {
-    $items['admin/settings/phpmailer']['_visible'] = FALSE;
-  }
-}
-
-/**
  * Implementation of hook_form_FORM_ID_alter().
  */
 function phpmailer_form_mimemail_admin_settings_alter(&$form, &$form_state) {
   // Hide the Mime Mail global enabler setting if phpmailer is used to deliver
   // e-mails (they can't be both active).
   if (phpmailer_enabled()) {
-    $form['mimemail']['mimemail_alter'] = array(
-      '#type' => 'value',
-      '#value' => 0,
-    );
+    $mimemail_alter = &$form['mimemail']['mimemail_alter'];
+    $mimemail_alter['#disabled'] = TRUE;
+    $mimemail_alter['#default_value'] = 0;
+    $mimemail_alter['#description'] = t('PHPMailer has been set to deliver all site messages. To let Mime Mail apply styles and formatting to system e-mails but still use PHPMailer for mail transport, uncheck <em>Use PHPMailer to send e-mails</em> first on the <a href="@url">PHPMailer settings page</a>. Then activate this setting and choose PHPMailer from the list of e-mail engines below.', array('@url' => url('admin/settings/phpmailer')));
   }
-  // Run our own validation and submit handler before Mime Mail to be able to
-  // detect configuration changes.
-  $form['#validate'] = array_merge(array('phpmailer_settings_form_validate'), (array)$form['#validate']);
-  $form['#submit'] = array_merge(array('phpmailer_settings_form_submit'), (array)$form['#submit']);
+  // @todo Move to MimeMail project.
+  $form['preview'] = array(
+    '#type' => 'item',
+    '#title' => t('Preview'),
+    '#value' => t('See a <a href="@url" target="_blank">preview of a styled e-mail</a> using the current message template (<code>mimemail-message.tpl.php</code>).', array('@url' => url('phpmailer/preview'))),
+  );
+  $form['buttons']['#weight'] = 10;
 }
 
 /**
@@ -93,8 +86,8 @@ function phpmailer_mailengine($op, $message = array()) {
       return t('Mailing engine using the PHPMailer library.');
 
     case 'settings':
-      module_load_include('inc', 'phpmailer', 'phpmailer.admin');
-      return phpmailer_settings_form();
+      $form['info']['#value'] = t('To configure your mail server settings, visit the <a href="@url">PHPMailer settings page</a>.', array('@url' => url('admin/settings/phpmailer')));
+      return $form;
 
     case 'multiple':
     case 'single':
