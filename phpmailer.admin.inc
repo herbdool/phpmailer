@@ -13,7 +13,7 @@
  * @see phpmailer_settings_form_validate()
  * @see phpmailer_settings_form_submit()
  */
-function phpmailer_settings_form() {
+function phpmailer_settings_form($form_state) {
   if (module_exists('mimemail') && $_GET['q'] == 'admin/settings/phpmailer') {
     // Redirect to Mime Mail settings page instead.
     drupal_goto('admin/settings/mimemail');
@@ -28,6 +28,9 @@ function phpmailer_settings_form() {
       '#default_value' => variable_get('smtp_on', 0),
       '#description' => t('When enabled, PHPMailer will be used to deliver all site e-mails.'),
     );
+    if (!variable_get('smtp_on', 0) && empty($form_state['post']['smtp_on'])) {
+      drupal_set_message(t('PHPMailer is currently disabled.'), 'warning');
+    }
   }
   else {
     $form['smtp_on'] = array(

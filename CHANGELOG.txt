@@ -3,6 +3,7 @@
 PHPMailer 6.x-3.x, xxxx-xx-xx
 -----------------------------
 by smk-ka: Removed bogus call to hook_mail_alter() from phpmailer_preview().
+by smk-ka: Display a warning message if PHPMailer is disabled.
 
 
 PHPMailer 6.x-3.0, 2010-07-07
