@@ -155,6 +155,8 @@ function phpmailer_settings_form($form_state) {
     '#description' => t('Type in an address to have a test e-mail sent there.'),
   );
 
+  $form['#submit'] = array('phpmailer_settings_form_submit');
+
   return system_settings_form($form);
 }
 
