@@ -132,7 +132,8 @@ function phpmailer_parse_address($string) {
     $email = preg_replace('/\x01/e', '_phpmailer_stack()', trim($email));
     // Check if it's a name-addr or a plain address (3.4).
     if (preg_match($adr_rx, $email, $matches)) {
-      $parsed[] = array('mail' => $matches['address'], 'name' => $matches['name']);
+      // PHPMailer expects an unencoded display name.
+      $parsed[] = array('mail' => $matches['address'], 'name' => mime_header_decode(stripslashes($matches['name'])));
     }
     else {
       $parsed[] = array('mail' => trim($email, '<>'), 'name' => '');
