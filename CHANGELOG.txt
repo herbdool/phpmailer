@@ -2,6 +2,8 @@
 
 PHPMailer 6.x-3.x, xxxx-xx-xx
 -----------------------------
+by smk-ka: Added a note to the README how to configure other popular
+ freemailers.
 #749506 by smk-ka: Fixed 'invalid address' error caused by MIME encoded e-mail
  addresses. Updated tests.
 by smk-ka: Improved installation and status report page error message in case

@@ -91,6 +91,10 @@ Optional:
   Also note the sending limits for Google Mail accounts:
   http://mail.google.com/support/bin/answer.py?hl=en&answer=22839
 
+* Using other popular freemailers as SMTP server
+
+  See http://phpmailer.worxware.com/index.php?pg=tip_srvrs.
+
 * Errors when trying to send a test email
 
   If you see the following error messages when trying to send a test email from
