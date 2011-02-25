@@ -1,4 +1,3 @@
-; $Id$
 name = PHPMailer
 description = Integrates the PHPMailer library for SMTP e-mail delivery.
 dependencies[] = libraries
