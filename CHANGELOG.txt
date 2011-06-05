@@ -1,6 +1,7 @@
 
 PHPMailer 6.x-3.x, xxxx-xx-xx
 -----------------------------
+by sun: Fixed PHP E_STRICT warnings.
 by smk-ka: Added a note to the README how to configure other popular
  freemailers.
 #749506 by smk-ka: Fixed 'invalid address' error caused by MIME encoded e-mail

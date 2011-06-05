@@ -124,7 +124,7 @@ class DrupalPHPMailer extends PHPMailer {
    *
    * Note: messages should not end with a dot.
    */
-  public function SetLanguage() {
+  public function SetLanguage($langcode = 'en', $lang_path = 'language/') {
     $this->language = array(
       'provide_address'     => t('You must provide at least one recipient e-mail address'),
       'encoding'            => t('Unknown encoding: '),

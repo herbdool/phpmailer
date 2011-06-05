@@ -23,7 +23,8 @@ function phpmailer_send($message) {
 
   try {
     // Parse 'From' e-mail address.
-    $from = reset(phpmailer_parse_address($message['from']));
+    $from = phpmailer_parse_address($message['from']);
+    $from = reset($from);
     $mail->From = $from['mail'];
     if ($from['name'] != '') {
       $mail->FromName = $from['name'];
