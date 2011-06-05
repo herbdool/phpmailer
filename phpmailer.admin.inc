@@ -24,7 +24,7 @@ function phpmailer_settings_form($form_state) {
   if (module_exists('mimemail') && variable_get('mimemail_alter', 0)) {
     $form['smtp_on']['#disabled'] = TRUE;
     $form['smtp_on']['#default_value'] = 0;
-    $form['smtp_on']['#description'] = t('MimeMail has been detected. To enable PHPMailer for mail transport, go to the <a href="@url">MimeMail settings page</a> and select PHPMailer from the available e-mail engines.', array('@url' => url('admin/settings/mimemail')));
+    $form['smtp_on']['#description'] = t('MimeMail has been detected. To enable PHPMailer for mail transport, go to the <a href="@url">MimeMail settings page</a> and select PHPMailer from the available e-mail engines.', array('@url' => url('admin/config/system/mimemail')));
   }
   elseif (!variable_get('smtp_on', 0) && empty($form_state['post']['smtp_on'])) {
     drupal_set_message(t('PHPMailer is currently disabled.'), 'warning');
@@ -181,13 +181,29 @@ function phpmailer_settings_form_submit($form, &$form_state) {
   // Enable/disable mail sending subsystem.
   if ($form_state['values']['smtp_on']) {
     if (!phpmailer_enabled()) {
-      variable_set('smtp_library', drupal_get_filename('module', 'phpmailer'));
+      $mail_system = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
+      $mail_system['default-system'] = 'DrupalPHPMailer';
+      variable_set('mail_system', $mail_system);
+
       drupal_set_message(t('PHPMailer will be used to deliver all site e-mails.'));
       watchdog('phpmailer', 'PHPMailer has been enabled.');
     }
   }
   else if (phpmailer_enabled()) {
-    variable_del('smtp_library');
+    // Remove PHPMailer from all mail keys it is configured for.
+    $mail_system = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
+    foreach ($mail_system as $key => $class) {
+      if ($class == 'DrupalPHPMailer') {
+        if ($key != 'default-system') {
+          unset($mail_system[$key]);
+        }
+        else {
+          $mail_system[$key] = 'DefaultMailSystem';
+        }
+      }
+    }
+    variable_set('mail_system', $mail_system);
+
     drupal_set_message(t('PHPMailer has been disabled.'));
     watchdog('phpmailer', 'PHPMailer has been disabled.');
   }
@@ -214,7 +230,7 @@ function phpmailer_settings_form_submit($form, &$form_state) {
  */
 function phpmailer_mail($key, &$message, $params) {
   $message['subject'] = t('PHPMailer test e-mail');
-  $message['body'][] = t('Your site is properly configured to send e-mails using the PHPMailer library.');
+  $message['body'][] = t('Your site is properly configured to send e-mails using the <strong>PHPMailer</strong> library.');
 }
 
 /**
@@ -251,6 +267,6 @@ function phpmailer_preview() {
   }
 
   print $body;
-  exit;
+  drupal_exit();
 }
 

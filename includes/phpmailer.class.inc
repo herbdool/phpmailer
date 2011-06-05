@@ -9,7 +9,7 @@
  * Base PHPMailer for Drupal implementation with support for SMTP keep-alive
  * and setting a custom Return-Path.
  */
-class DrupalPHPMailer extends PHPMailer {
+class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
   /**
    * Stores the Return-Path, which may be different from Sender.
    */
@@ -43,7 +43,7 @@ class DrupalPHPMailer extends PHPMailer {
     $this->SMTPDebug = variable_get('smtp_debug', 0);
 
     // Adjust path to SMTP class.
-    $this->PluginDir = './'. phpmailer_get_path() .'/';
+    $this->PluginDir = DRUPAL_ROOT . '/' . libraries_get_path('phpmailer') . '/';
   }
 
   /**
@@ -179,6 +179,145 @@ class DrupalPHPMailer extends PHPMailer {
     $result = sprintf("%s %s%04d", date('D, j M Y H:i:s'), $tzs, $tz);
 
     return $result;
+  }
+
+  /**
+   * Concatenates and wraps the e-mail body for plain-text mails.
+   *
+   * Mails contain HTML by default. When using PHPMailer without MimeMail
+   * module, plain-text e-mails are sent, which require the same processing as
+   * in the DefaultMailSystem implementation.
+   *
+   * @see DefaultMailSystem::format()
+   *
+   * @param $message
+   *   A message array, as described in hook_mail_alter().
+   *
+   * @return
+   *   The formatted $message.
+   */
+  public function format(array $message) {
+    // Join the body array into one string.
+    $message['body'] = implode("\n\n", $message['body']);
+    // Convert any HTML to plain-text.
+    $message['body'] = drupal_html_to_text($message['body']);
+    // Wrap the mail body for sending.
+    $message['body'] = drupal_wrap_mail($message['body']);
+    return $message;
+  }
+
+  /**
+   * Sends an e-mail message composed by drupal_mail().
+   *
+   * @param $message
+   *   A message array, as described in hook_mail_alter().
+   * @return
+   *   TRUE if the mail was successfully accepted, otherwise FALSE.
+   *
+   * @see PHPMailer::Send()
+   */
+  public function mail(array $message) {
+    try {
+      // Parse 'From' e-mail address.
+      $from = phpmailer_parse_address($message['from']);
+      $from = reset($from);
+      $this->From = $from['mail'];
+      if ($from['name'] != '') {
+        $this->FromName = $from['name'];
+      }
+      unset($message['headers']['From']);
+
+      if (variable_get('phpmailer_debug_email', '') === '') {
+        // Set recipients.
+        foreach (phpmailer_parse_address($message['to']) as $address) {
+          $this->AddAddress($address['mail'], $address['name']);
+        }
+        // Extract CCs and BCCs from headers.
+        if (isset($message['headers']['CC'])) {
+          foreach (phpmailer_parse_address($message['headers']['CC']) as $address) {
+            $this->AddCC($address['mail'], $address['name']);
+          }
+        }
+        if (isset($message['headers']['BCC'])) {
+          foreach (phpmailer_parse_address($message['headers']['BCC']) as $address) {
+            $this->AddBCC($address['mail'], $address['name']);
+          }
+        }
+      }
+      else {
+        // Reroute to debug e-mail address.
+        $this->AddAddress(variable_get('phpmailer_debug_email', ''));
+      }
+      unset($message['headers']['CC'], $message['headers']['BCC']);
+
+      // Extract Reply-To from headers.
+      if (isset($message['headers']['Reply-To'])) {
+        foreach (phpmailer_parse_address($message['headers']['Reply-To']) as $address) {
+          $this->AddReplyTo($address['mail'], $address['name']);
+        }
+        unset($message['headers']['Reply-To']);
+      }
+      elseif (variable_get('smtp_always_replyto', FALSE)) {
+        // If no Reply-To header has been explicitly set, use the From address to
+        // be able to respond to e-mails sent via Google Mail.
+        $this->AddReplyTo($from['mail'], $from['name']);
+      }
+
+      // Extract Content-Type and charset.
+      if (isset($message['headers']['Content-Type'])) {
+        $content_type = explode(';', $message['headers']['Content-Type']);
+        $this->ContentType = trim(array_shift($content_type));
+        foreach ($content_type as $param) {
+          $param = explode('=', $param, 2);
+          $key = trim($param[0]);
+          if ($key == 'charset') {
+            $this->CharSet = trim($param[1]);
+          }
+          else {
+            $this->ContentType .= '; ' . $key . '=' . trim($param[1]);
+          }
+        }
+        unset($message['headers']['Content-Type']);
+      }
+
+      // Set additional properties.
+      $properties = array(
+        'X-Priority'                => 'Priority',
+        'Content-Transfer-Encoding' => 'Encoding',
+        'Sender'                    => 'Sender',
+        'Message-ID'                => 'MessageID',
+        // Custom property.
+        // @see DrupalPHPMailer::CreateHeader()
+        'Return-Path'               => 'ReturnPath',
+      );
+      foreach ($properties as $source => $property) {
+        if (isset($message['headers'][$source])) {
+          $this->$property = $message['headers'][$source];
+          unset($message['headers'][$source]);
+        }
+      }
+
+      // This one is always set by PHPMailer.
+      unset($message['headers']['MIME-Version']);
+
+      // Add remaining header lines.
+      // Note: Any header lines MUST already be checked by the caller for unwanted
+      // newline characters to avoid header injection.
+      // @see PHPMailer::SecureHeader()
+      foreach ($message['headers'] as $key => $value) {
+        $this->AddCustomHeader("$key:$value");
+      }
+
+      $this->Subject = $message['subject'];
+      $this->Body = $message['body'];
+
+      return $this->Send();
+    }
+    catch (phpmailerException $e) {
+      drupal_set_message(t('Sending of at least one e-mail failed. The error returned was:<br />@error.', array('@error' => $e->getMessage())), 'error');
+      watchdog('phpmailer', $e->getMessage(), NULL, WATCHDOG_ERROR);
+      return FALSE;
+    }
   }
 }
 

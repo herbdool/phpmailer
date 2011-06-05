@@ -15,9 +15,6 @@ function mimemail_phpmailer_send($message) {
   static $mail;
 
   if (!isset($mail)) {
-    if (!phpmailer_load_library()) {
-      return FALSE;
-    }
     $mail = new DrupalPHPMailer();
     // Keep linefeed style in sync.
     $mail->LE = variable_get('mimemail_crlf', "\n");

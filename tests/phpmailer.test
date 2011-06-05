@@ -6,14 +6,11 @@
  */
 
 class PHPMailerUnitTestCase extends DrupalUnitTestCase {
-  /**
-   * Implementation of getInfo().
-   */
   public static function getInfo() {
     return array(
-      'name' => t('E-mail address parser'),
-      'description' => t('Validates e-mail address extraction.'),
-      'group' => t('PHPMailer'),
+      'name' => 'E-mail address parser',
+      'description' => 'Validates e-mail address extraction.',
+      'group' => 'PHPMailer',
     );
   }
 
