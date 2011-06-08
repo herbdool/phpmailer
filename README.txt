@@ -74,7 +74,7 @@ Optional:
   page.  Then activate "Use mime mail for all messages" on the Mime Mail
   settings page and choose PHPMailer from the list of available e-mail engines.
 
-* Using Google Mail as SMTP server
+* Using Google Mail or Google Apps as SMTP server
 
   To send e-mails with Google Mail use the following settings:
 
@@ -82,6 +82,7 @@ Optional:
     SMTP port:       465
     Secure protocol: SSL
     Username:        your_google_mail_name@gmail.com
+      or:            your_username@your_google_apps_domain.com
     Password:        your_google_mail_password
 
   In Advanced SMTP settings:
@@ -89,6 +90,9 @@ Optional:
 
   Also note the sending limits for Google Mail accounts:
   http://mail.google.com/support/bin/answer.py?hl=en&answer=22839
+
+  General instructions for Google Mail accounts:
+  http://mail.google.com/support/bin/answer.py?answer=13287
 
 * Using other popular freemailers as SMTP server
 
