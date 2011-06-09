@@ -137,8 +137,31 @@ function phpmailer_settings_form($form_state) {
   if ($test_address = variable_get('phpmailer_test', '')) {
     // Delete first to avoid unintended resending in case of an error.
     variable_del('phpmailer_test');
-    drupal_mail('phpmailer', 'test', $test_address, NULL);
-    drupal_set_message(t('A test e-mail has been sent to %email. <a href="@watchdog-url">Check the logs</a> for any error messages.', array('%email' => $test_address, '@watchdog-url' => url('admin/reports/dblog'))));
+    // If PHPMailer is enabled, send via regular drupal_mail().
+    if (phpmailer_enabled()) {
+      drupal_mail('phpmailer', 'test', $test_address, NULL);
+    }
+    // Otherwise, prepare and send the test mail manually.
+    else {
+      // Prepare the message without sending.
+      $message = drupal_mail('phpmailer', 'test', $test_address, NULL, array(), NULL, FALSE);
+      // Send the message. drupal_mail_wrapper() is only defined when PHPMailer
+      // is enabled, so drupal_mail_send() cannot be used.
+      // @see drupal_mail_send()
+      module_load_include('inc', 'phpmailer', 'includes/phpmailer.drupal');
+      $message['result'] = phpmailer_send($message);
+
+      // Log errors
+      // @see drupal_mail()
+      if (!$message['result']) {
+        watchdog('mail', 'Error sending e-mail (from %from to %to).', array('%from' => $message['from'], '%to' => $message['to']), WATCHDOG_ERROR);
+        drupal_set_message(t('Unable to send e-mail. Please contact the site administrator if the problem persists.'), 'error');
+      }
+    }
+    drupal_set_message(t('A test e-mail has been sent to %email. <a href="@watchdog-url">Check the logs</a> for any error messages.', array(
+      '%email' => $test_address,
+      '@watchdog-url' => url('admin/reports/dblog'),
+    )));
   }
 
   $form['test'] = array(
