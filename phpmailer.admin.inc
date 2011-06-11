@@ -149,14 +149,7 @@ function phpmailer_settings_form($form_state) {
       // is enabled, so drupal_mail_send() cannot be used.
       // @see drupal_mail_send()
       module_load_include('inc', 'phpmailer', 'includes/phpmailer.drupal');
-      $message['result'] = phpmailer_send($message);
-
-      // Log errors
-      // @see drupal_mail()
-      if (!$message['result']) {
-        watchdog('mail', 'Error sending e-mail (from %from to %to).', array('%from' => $message['from'], '%to' => $message['to']), WATCHDOG_ERROR);
-        drupal_set_message(t('Unable to send e-mail. Please contact the site administrator if the problem persists.'), 'error');
-      }
+      phpmailer_send($message);
     }
     drupal_set_message(t('A test e-mail has been sent to %email. <a href="@watchdog-url">Check the logs</a> for any error messages.', array(
       '%email' => $test_address,

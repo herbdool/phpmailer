@@ -16,6 +16,37 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
   public $ReturnPath = '';
 
   /**
+   * Verbose debug output level configured for Drupal.
+   *
+   * In order to be able to log error messages with actual error information and
+   * see what actually went wrong for a particular message, PHPMailer::SMTPDebug
+   * always needs to be enabled.
+   *
+   * DrupalPHPMailer::SmtpSend() overrides PHPMailer::SmtpSend() to capture the
+   * debug output string and make it available for watchdog() calls.
+   *
+   * @see PHPMailer::SMTPDebug
+   * @see SMTP::do_debug
+   * @see DrupalPHPMailer::SmtpSend()
+   * @see DrupalPHPMailer::drupalDebugOutput
+   *
+   * @var int
+   */
+  public $drupalDebug = 0;
+
+  /**
+   * Overrides PHPMailer::SMTPDebug to capture SMTP communication errors by default.
+   */
+  public $SMTPDebug = 2;
+
+  /**
+   * Stores the verbose debug output of the SMTP communication.
+   *
+   * @var string
+   */
+  public $drupalDebugOutput = '';
+
+  /**
    * Constructor.
    */
   public function __construct() {
@@ -40,7 +71,11 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     $this->SMTPAuth = (bool)($this->Username != '' && $this->Password != '');
 
     $this->SMTPKeepAlive = variable_get('smtp_keepalive', 0);
-    $this->SMTPDebug = variable_get('smtp_debug', 0);
+
+    $this->drupalDebug = variable_get('smtp_debug', 0);
+    if ($this->drupalDebug > $this->SMTPDebug) {
+      $this->SMTPDebug = $this->drupalDebug;
+    }
 
     // Adjust path to SMTP class.
     $this->PluginDir = DRUPAL_ROOT . '/' . libraries_get_path('phpmailer') . '/';
@@ -53,6 +88,8 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
    */
   public function SmtpSend($header, $body) {
     if ($this->SMTPDebug) {
+      // Clear possibly previously captured debug output.
+      $this->drupalDebugOutput = '';
       ob_start();
     }
 
@@ -67,7 +104,8 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     catch (phpmailerException $exception) {}
 
     if ($this->SMTPDebug) {
-      if ($debug = ob_get_contents()) {
+      $this->drupalDebugOutput = ob_get_contents();
+      if ($this->drupalDebug && $this->drupalDebugOutput) {
         drupal_set_message($debug);
       }
       ob_end_clean();
@@ -314,8 +352,54 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
       return $this->Send();
     }
     catch (phpmailerException $e) {
-      drupal_set_message(t('Sending of at least one e-mail failed. The error returned was:<br />@error.', array('@error' => $e->getMessage())), 'error');
-      watchdog('phpmailer', $e->getMessage(), NULL, WATCHDOG_ERROR);
+      // Log the error including verbose debug information.
+      // Since DBLog module is the most common case, we use HTML to format the
+      // message for visual inspection. For sites running with Syslog or other
+      // logging modules, we put the actual values on separate lines (\n), so the
+      // surrounding HTML markup doesn't get too disturbing.
+
+      // Message is a safe t() string from DrupalPHPMailer::SetLanguage().
+      $output = $e->getMessage();
+      $arguments = array();
+      // Append SMTP communication output.
+      if ($mail->drupalDebugOutput) {
+        // PHPMailer debug output contains HTML linebreaks. PRE is more readable.
+        $mail->drupalDebugOutput = str_replace('<br />', '', $mail->drupalDebugOutput);
+        $output .= '<p><strong>Server response:</strong></p>';
+        $output .= "<pre>\n@smtp_output\n</pre>";
+        $arguments += array(
+          '@smtp_output' => $mail->drupalDebugOutput,
+        );
+      }
+      // We need to log the message in order to be able to debug why the server
+      // responded with an error. The mail body may contain passwords and other
+      // sensitive information, which should not be logged. Since all kind of
+      // mails are processed and Drupal provides no way to mark sensible data,
+      // it is technically impossible prevent logging in all cases.
+      // Remove $params; they've already been processed and may contain sensible
+      // data.
+      unset($message['params']);
+
+      // Subject.
+      $output .= "<p><strong>Subject:</strong> \n@subject\n</p>";
+      $arguments += array(
+        '@subject' => $message['subject'],
+      );
+      unset($message['subject']);
+      // Body.
+      $output .= '<p><strong>Body:</strong></p>';
+      $output .= "<pre>\n@body\n</pre>";
+      $arguments += array(
+        '@body' => $message['body'],
+      );
+      unset($message['body']);
+      // Rest of $message.
+      $output .= '<p><strong>Message:</strong></p>';
+      $output .= "<pre>\n@message\n</pre>";
+      $arguments += array(
+        '@message' => var_export($message, TRUE),
+      );
+      watchdog('phpmailer', $output, $arguments, WATCHDOG_ERROR);
       return FALSE;
     }
   }

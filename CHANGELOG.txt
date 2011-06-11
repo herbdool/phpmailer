@@ -1,6 +1,7 @@
 
 PHPMailer 7.x-3.x, xxxx-xx-xx
 -----------------------------
+#1183836 by sun: Fixed more verbose log messages required in case of an error.
 #1183820 by sun: Allow sending test mail without globally enabling PHPMailer.
 #971172 by sun, Shaun Dychko: Clarify Google Apps support.
 #811774 by sun, elliotttf: Ported to Drupal 7.
