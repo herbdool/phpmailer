@@ -12,7 +12,7 @@
  * @see phpmailer_settings_form_validate()
  * @see phpmailer_settings_form_submit()
  */
-function phpmailer_settings_form($form_state) {
+function phpmailer_settings_form($form, $form_state) {
   $form['smtp_on'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use PHPMailer to send e-mails'),
@@ -26,7 +26,7 @@ function phpmailer_settings_form($form_state) {
     $form['smtp_on']['#default_value'] = 0;
     $form['smtp_on']['#description'] = t('MimeMail has been detected. To enable PHPMailer for mail transport, go to the <a href="@url">MimeMail settings page</a> and select PHPMailer from the available e-mail engines.', array('@url' => url('admin/config/system/mimemail')));
   }
-  elseif (!variable_get('smtp_on', 0) && empty($form_state['input']['smtp_on'])) {
+  elseif (!variable_get('smtp_on', 0) && empty($form_state['input'])) {
     drupal_set_message(t('PHPMailer is currently disabled.'), 'warning');
   }
 
