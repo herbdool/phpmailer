@@ -360,15 +360,17 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
 
       // Message is a safe t() string from DrupalPHPMailer::SetLanguage().
       $output = $e->getMessage();
+      // Attempt to delimit summary from full message.
+      $output .= " \n";
       $arguments = array();
       // Append SMTP communication output.
-      if ($mail->drupalDebugOutput) {
+      if ($this->drupalDebugOutput) {
         // PHPMailer debug output contains HTML linebreaks. PRE is more readable.
-        $mail->drupalDebugOutput = str_replace('<br />', '', $mail->drupalDebugOutput);
+        $this->drupalDebugOutput = str_replace('<br />', '', $this->drupalDebugOutput);
         $output .= '<p><strong>Server response:</strong></p>';
         $output .= "<pre>\n@smtp_output\n</pre>";
         $arguments += array(
-          '@smtp_output' => $mail->drupalDebugOutput,
+          '@smtp_output' => $this->drupalDebugOutput,
         );
       }
       // We need to log the message in order to be able to debug why the server
