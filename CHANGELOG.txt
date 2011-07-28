@@ -1,6 +1,7 @@
 
 PHPMailer 7.x-3.x, xxxx-xx-xx
 -----------------------------
+#927646 by oadaeh: Fixed Bogus case of Cc and Bcc mail header fields.
 #811774 by InternetDevels.Com, sun: Fixed MimeMail integration.
 #811774 by sun: Fixed duplicate disabled warning when submitting settings form.
 #1188610 by sun: Fixed bogus variable $mail in exception handling.

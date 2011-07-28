@@ -38,13 +38,13 @@ function mimemail_phpmailer_send($message) {
         $mail->AddAddress($address['mail']);
       }
       // Extract CCs and BCCs from headers.
-      if (isset($message['headers']['CC'])) {
-        foreach (phpmailer_parse_address($message['headers']['CC']) as $address) {
+      if (isset($message['headers']['Cc'])) {
+        foreach (phpmailer_parse_address($message['headers']['Cc']) as $address) {
           $mail->AddCC($address['mail']);
         }
       }
-      if (isset($message['headers']['BCC'])) {
-        foreach (phpmailer_parse_address($message['headers']['BCC']) as $address) {
+      if (isset($message['headers']['Bcc'])) {
+        foreach (phpmailer_parse_address($message['headers']['Bcc']) as $address) {
           $mail->AddBCC($address['mail']);
         }
       }
@@ -54,7 +54,7 @@ function mimemail_phpmailer_send($message) {
       $message['to'] = variable_get('phpmailer_debug_email', '');
       $mail->AddAddress($message['to']);
     }
-    unset($message['headers']['CC'], $message['headers']['BCC']);
+    unset($message['headers']['Cc'], $message['headers']['Bcc']);
 
     $message['headers']['Date'] = $mail->RFCDate();
 
