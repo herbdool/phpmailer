@@ -25,7 +25,8 @@ function mimemail_phpmailer_send($message) {
     // Display names are usually not required. Leave header intact.
 
     // Parse 'From' e-mail address.
-    $from = reset(phpmailer_parse_address($message['sender']));
+    $from = phpmailer_parse_address($message['from']);
+    $from = reset($from);
     $mail->From = $from['mail'];
     if ($from['name'] != '') {
       $mail->FromName = $from['name'];
@@ -33,7 +34,7 @@ function mimemail_phpmailer_send($message) {
 
     if (variable_get('phpmailer_debug_email', '') === '') {
       // Set recipients.
-      foreach (phpmailer_parse_address($message['address']) as $address) {
+      foreach (phpmailer_parse_address($message['to']) as $address) {
         $mail->AddAddress($address['mail']);
       }
       // Extract CCs and BCCs from headers.
@@ -50,15 +51,15 @@ function mimemail_phpmailer_send($message) {
     }
     else {
       // Reroute to debug e-mail address.
-      $message['address'] = variable_get('phpmailer_debug_email', '');
-      $mail->AddAddress($message['address']);
+      $message['to'] = variable_get('phpmailer_debug_email', '');
+      $mail->AddAddress($message['to']);
     }
     unset($message['headers']['CC'], $message['headers']['BCC']);
 
     $message['headers']['Date'] = $mail->RFCDate();
 
-    if ($message['address']) {
-      $message['headers']['To'] = $message['address'];
+    if ($message['to']) {
+      $message['headers']['To'] = $message['to'];
     }
 
     // If no Reply-To header has been explicitly set, use the From address to be
