@@ -79,11 +79,11 @@ function phpmailer_mailengine($op, $message = array()) {
   }
 
   switch ($op) {
-    case 'name':
-      return t('PHPMailer');
-
-    case 'description':
-      return t('Mailing engine using the PHPMailer library.');
+    case 'list':
+      return array(
+        'name' => t('PHPMailer'),
+        'description' => t('Mailing engine using the PHPMailer library.'),
+      );
 
     case 'settings':
       $form['info']['#value'] = t('To configure your mail server settings, visit the <a href="@url">PHPMailer settings page</a>.', array('@url' => url('admin/config/system/phpmailer')));
@@ -217,7 +217,7 @@ function phpmailer_registry_files_alter(&$files, $modules) {
   if (!$library_path) {
     return;
   }
-  foreach (array('class.phpmailer.php', 'class.pop3.php', 'class.smtp.php') as $filename) {
+  foreach (array('class.phpmailer.php', 'class.smtp.php') as $filename) {
     $files[$library_path . '/' . $filename] = array(
       'module' => 'phpmailer',
       'weight' => 0,
@@ -226,15 +226,17 @@ function phpmailer_registry_files_alter(&$files, $modules) {
 }
 
 /**
- * Returns whether PHPMailer library files exist.
+ * Verify that PHPMailer libraries exist.
  */
 function phpmailer_library_exists() {
-  $exists = FALSE;
   $library_path = libraries_get_path('phpmailer');
-  if ($library_path) {
-    foreach (array('class.phpmailer.php', 'class.pop3.php', 'class.smtp.php') as $filename) {
-      $exists = ($exists && file_exists(DRUPAL_ROOT . '/' . $library_path . '/' . $filename));
+  if (!$library_path) {
+    return FALSE;
+  }
+  foreach (array('class.phpmailer.php', 'class.smtp.php') as $filename) {
+    if (!file_exists(DRUPAL_ROOT . '/' . $library_path . '/' . $filename)) {
+      return FALSE;
     }
   }
-  return $exists;
+  return TRUE;
 }
