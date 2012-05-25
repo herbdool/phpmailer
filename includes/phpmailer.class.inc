@@ -104,9 +104,8 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     catch (phpmailerException $exception) {}
 
     if ($this->SMTPDebug) {
-      $this->drupalDebugOutput = ob_get_contents();
-      if ($this->drupalDebug && $this->drupalDebugOutput) {
-        drupal_set_message($debug);
+      if ($this->drupalDebug && ($this->drupalDebugOutput = ob_get_contents())) {
+        drupal_set_message($this->drupalDebugOutput);
       }
       ob_end_clean();
     }
