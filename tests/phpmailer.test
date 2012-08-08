@@ -14,6 +14,11 @@ class PHPMailerUnitTestCase extends DrupalUnitTestCase {
     );
   }
 
+  function setUp() {
+    parent::setUp();
+    drupal_load('module', 'phpmailer');
+  }
+
   /**
    * Test e-mail address extraction using phpmailer_parse_address().
    */
