@@ -16,8 +16,8 @@ To submit bug reports and feature suggestions, or to track changes:
 * Libraries API module
   http://drupal.org/project/libraries
 
-* PHPMailer for PHP5/6
-  http://phpmailer.codeworxtech.com
+* PHPMailer library
+  https://github.com/Synchro/PHPMailer
 
 Optional:
 
@@ -33,9 +33,9 @@ Optional:
 
 -- INSTALLATION --
 
-1. Download PHPMailer for PHP5/6 from
+1. Download PHPMailer from
 
-     http://sourceforge.net/projects/phpmailer/files/phpmailer%20for%20php5_6/
+     https://github.com/Synchro/PHPMailer/tags
 
    and extract the following files to the phpmailer subdirectory of your
    libraries directory:
