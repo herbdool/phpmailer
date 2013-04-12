@@ -17,7 +17,7 @@ To submit bug reports and feature suggestions, or to track changes:
   http://drupal.org/project/libraries
 
 * PHPMailer library
-  https://github.com/Synchro/PHPMailer
+  https://github.com/PHPMailer/PHPMailer
 
 Optional:
 
@@ -33,23 +33,20 @@ Optional:
 
 -- INSTALLATION --
 
-1. Download PHPMailer from
+1. Download the latest PHPMailer library from
 
-     https://github.com/Synchro/PHPMailer/tags
+     https://github.com/PHPMailer/PHPMailer/tags
 
-   and extract the following files to the phpmailer subdirectory of your
-   libraries directory:
+   and extract the following files into a 'phpmailer' library directory:
 
-     class.phpmailer.php
-     class.smtp.php
-
-   Be careful NOT to extract the path names contained in the archive.
+     sites/all/libraries/phpmailer/class.phpmailer.php
+     sites/all/libraries/phpmailer/class.smtp.php
 
    It is recommended that you create your libraries directory at one of the
    following locations:
 
-     sites/all/libraries
-     sites/<domain>/libraries
+     sites/all/libraries/phpmailer
+     sites/<site>/libraries/phpmailer
 
    Consult the Libraries API documentation for further information.
 
