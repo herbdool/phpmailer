@@ -115,7 +115,7 @@ function phpmailer_parse_address($string) {
   // The display name may contain commas (3.4). Extract all quoted strings
   // (3.2.4) to a stack and replace them with a placeholder to prevent
   // splitting at wrong places.
-  $string = preg_replace('/(".*?(?<!\\\\)")/e', '_phpmailer_stack("$1")', $string);
+  $string = preg_replace_callback('(".*?(?<!\\\\)")', '_phpmailer_stack', $string);
 
   // Build a regex that matches a name-addr (3.4).
   // @see valid_email_address()
@@ -129,7 +129,7 @@ function phpmailer_parse_address($string) {
   // Split string into multiple parts and process each.
   foreach (explode(',', $string) as $email) {
     // Re-inject stripped placeholders.
-    $email = preg_replace('/\x01/e', '_phpmailer_stack()', trim($email));
+    $email = preg_replace_callback('(\x01)', '_phpmailer_stack', trim($email));
     // Check if it's a name-addr or a plain address (3.4).
     if (preg_match($adr_rx, $email, $matches)) {
       // PHPMailer expects an unencoded display name.
@@ -145,10 +145,11 @@ function phpmailer_parse_address($string) {
 /**
  * Implements a FIFO stack to store extracted quoted strings.
  */
-function _phpmailer_stack($string = NULL) {
+function _phpmailer_stack($matches = NULL) {
+  $string = $matches[0];
   static $stack = array();
 
-  if (!isset($string)) {
+  if ($string == "\x01") {
     // Unescape quoted characters (3.2.4) to prevent double escaping.
     return str_replace(array('\"', '\\\\'), array('"', '\\'), array_shift($stack));
   }
