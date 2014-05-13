@@ -1,0 +1,20 @@
+{
+  "name": "drupal/phpmailer",
+  "description": "Integrates the PHPMailer library for SMTP e-mail delivery.",
+  "type": "drupal-module",
+  "license": "GPL-2.0",
+  "authors": [
+    {
+      "name": "Stefan M. Kudwien (smk-ka)",
+      "homepage": "http://drupal.org/user/48898"
+    },
+    {
+      "name": "Daniel F. Kudwien (sun)",
+      "homepage": "http://drupal.org/user/54136"
+    }
+  ],
+  "require": {
+    "phpmailer/phpmailer": ">=5.2.5"
+  },
+  "minimum-stability": "beta"
+}
