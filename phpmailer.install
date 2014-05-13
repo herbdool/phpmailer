@@ -91,3 +91,12 @@ function phpmailer_update_7000() {
     variable_del('smtp_library');
   }
 }
+
+/**
+ * Add support for the Mail System module.
+ */
+function phpmailer_update_7001() {
+  if (module_exists('mailsystem')) {
+    mailsystem_set(array('phpmailer' => 'DrupalPHPMailer'));
+  }
+}
