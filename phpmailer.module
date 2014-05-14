@@ -86,7 +86,7 @@ function phpmailer_mailengine($op, $message = array()) {
       );
 
     case 'settings':
-      $form['info']['#value'] = t('To configure your mail server settings, visit the <a href="@url">PHPMailer settings page</a>.', array('@url' => url('admin/config/system/phpmailer')));
+      $form['info']['#markup'] = t('To configure your mail server settings, visit the <a href="@url">PHPMailer settings page</a>.', array('@url' => url('admin/config/system/phpmailer')));
       return $form;
 
     case 'multiple':
