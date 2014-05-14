@@ -93,6 +93,9 @@ function phpmailer_mailengine($op, $message = array()) {
     case 'single':
     case 'send':
       module_load_include('inc', 'phpmailer', 'includes/phpmailer.mimemail');
+      // Mimemail API does not load mimemail.inc for other mailengines; we rely
+      // on mimemail_rfc_headers(), so ensure that it is loaded.
+      module_load_include('inc', 'mimemail');
       return mimemail_phpmailer_send($message);
   }
 }
