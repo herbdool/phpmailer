@@ -139,7 +139,7 @@ function phpmailer_settings_form($form, $form_state) {
     variable_del('phpmailer_test');
     // If PHPMailer is enabled, send via regular drupal_mail().
     if (phpmailer_enabled()) {
-      drupal_mail('phpmailer', 'test', $test_address, NULL);
+      $result = drupal_mail('phpmailer', 'test', $test_address, NULL);
     }
     // Otherwise, prepare and send the test mail manually.
     else {
@@ -149,12 +149,20 @@ function phpmailer_settings_form($form, $form_state) {
       // is enabled, so drupal_mail_send() cannot be used.
       // @see drupal_mail_send()
       module_load_include('inc', 'phpmailer', 'includes/phpmailer.drupal');
-      phpmailer_send($message);
+      $result = phpmailer_send($message);
     }
-    drupal_set_message(t('A test e-mail has been sent to %email. <a href="@watchdog-url">Check the logs</a> for any error messages.', array(
+
+    $notice = 'A test e-mail has been sent to %email. You might still want to !watchdog-url for possible error messages.';
+    $replacements = array(
       '%email' => $test_address,
-      '@watchdog-url' => url('admin/reports/dblog'),
-    )));
+      '!watchdog-url' => l(t('check the logs'), 'admin/reports/dblog'),
+    );
+    $message_type = 'status';
+    if (empty($result) || (is_array($result) && empty($result['result']))) {
+      $notice = 'A test e-mail has NOT been sent to %email. You should !watchdog-url for error messages.';
+      $message_type = 'error';
+    }
+    drupal_set_message(t($notice, $replacements), $message_type);
   }
 
   $form['test'] = array(
