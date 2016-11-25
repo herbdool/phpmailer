@@ -65,6 +65,10 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     $this->Port = variable_get('smtp_port', '25');
     $this->SMTPSecure = variable_get('smtp_protocol', '');
 
+    $this->SMTPOptions['ssl']['verify_peer'] = variable_get('ssl_verify_peer', 1);
+    $this->SMTPOptions['ssl']['verify_peer_name'] = variable_get('ssl_verify_peer_name', 1);
+    $this->SMTPOptions['ssl']['allow_self_signed'] = variable_get('ssl_allow_self_signed', 0);
+
     // Use SMTP authentication if both username and password are given.
     $this->Username = variable_get('smtp_username', '');
     $this->Password = variable_get('smtp_password', '');
