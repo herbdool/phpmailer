@@ -13,6 +13,17 @@
  * @see phpmailer_settings_form_submit()
  */
 function phpmailer_settings_form($form, $form_state) {
+  // Re-check the requirements, in case a newer version is required since
+  // original installation.
+  module_load_install('phpmailer');
+  $requirements = phpmailer_requirements('runtime');
+  if (!empty($requirements)
+    && isset($requirements['phpmailer']['severity'])
+    && $requirements['phpmailer']['severity'] == REQUIREMENT_ERROR
+    && isset($requirements['phpmailer']['description'])) {
+    drupal_set_message($requirements['phpmailer']['description'], 'error');
+  }
+
   $form['smtp_on'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use PHPMailer to send e-mails'),
