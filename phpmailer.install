@@ -75,6 +75,7 @@ function phpmailer_uninstall() {
   variable_del('smtp_password');
   variable_del('smtp_keepalive');
   variable_del('smtp_debug');
+  variable_del('smtp_debug_log');
 }
 
 /**

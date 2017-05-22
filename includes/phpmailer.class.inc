@@ -77,7 +77,7 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     $this->SMTPKeepAlive = variable_get('smtp_keepalive', 0);
 
     $this->drupalDebug = variable_get('smtp_debug', 0);
-    if ($this->drupalDebug > $this->SMTPDebug) {
+    if ($this->drupalDebug > $this->SMTPDebug && user_access('administer phpmailer settings')) {
       $this->SMTPDebug = $this->drupalDebug;
     }
 
@@ -110,6 +110,9 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     if ($this->SMTPDebug) {
       if ($this->drupalDebug && ($this->drupalDebugOutput = ob_get_contents())) {
         drupal_set_message($this->drupalDebugOutput);
+        if (variable_get('smtp_debug_log', 0)) {
+          watchdog('phpmailer', 'Output of communication with SMTP server:<br /><pre>!output</pre>', array('!output' => print_r($this->drupalDebugOutput, TRUE)), WATCHDOG_DEBUG);
+        }
       }
       ob_end_clean();
     }

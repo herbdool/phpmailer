@@ -143,6 +143,17 @@ function phpmailer_settings_form($form, $form_state) {
     '#options' => array(0 => t('Disabled'), 1 => t('Errors only'), 2 => t('Server responses'), 4 => t('Full communication')),
     '#description' => t("Debug the communication with the SMTP server.  You normally shouldn't enable this unless you're trying to debug e-mail sending problems."),
   );
+  $form['advanced']['smtp_debug_log'] = array(
+    '#type' => 'checkbox',
+    '#title' => t("Record debugging output in Drupal's log"),
+    '#default_value' => variable_get('smtp_debug_log', 0),
+    '#description' => t("If this is checked, the debugging out put that is produced will also be recorded in Drupal's database log."),
+    '#states' => array(
+      'visible' => array(
+        ':input[name=smtp_debug]' => array('!value' => 0),
+      ),
+    ),
+  );
 
   $form['advanced']['ssl_settings'] = array(
     '#type' => 'fieldset',
