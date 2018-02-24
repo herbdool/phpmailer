@@ -72,7 +72,11 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     // Use SMTP authentication if both username and password are given.
     $this->Username = variable_get('smtp_username', '');
     $this->Password = variable_get('smtp_password', '');
-    $this->SMTPAuth = (bool)($this->Username != '' && $this->Password != '');
+    $this->SMTPAuth = (bool) ($this->Username != '' && $this->Password != '');
+    $auth_type = variable_get('smtp_auth_type', '');
+    if ($this->SMTPAuth && $auth_type) {
+      $this->AuthType = $auth_type;
+    }
 
     $this->SMTPKeepAlive = variable_get('smtp_keepalive', 0);
 

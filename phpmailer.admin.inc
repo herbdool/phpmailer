@@ -84,6 +84,33 @@ function phpmailer_settings_form($form, $form_state) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
+  $auth_options = array(
+    '' => '',
+    'CRAM-MD5' => 'CRAM-MD5',
+    'LOGIN' => 'LOGIN',
+    'PLAIN' => 'PLAIN',
+    'NTLM' => 'NTLM',
+    'XOAUTH2' => 'XOAUTH2',
+  );
+  $description = t(
+    ' If you do not specify an authentication type for use when authenticating with the server, the PHPMailer library will attempt to guess one, based on the infomration it receives from the server.'
+    . ' If that does not work, and you receive authentication failed notices, try specifying the authentication type.'
+    . ' <br />If you are unsure which type to use, consider the following guidelines:'
+    . ' <ul>'
+    . ' <li>If the connection is NOT using a sucure protocol, try CRAM-MD5 first, then try LOGIN or PLAIN.</li>'
+    . ' <li>If the connection is using a secure protocol, you can try LOGIN or PLAIN first, then CRAM-MD5.</li>'
+    . ' </ul>'
+    . ' (CRAM-MD5 hashes the password before sending, so it is not transmitted in the clear.)'
+    . ' <br />If none of those options work, contact your email hoster to find out what their SMTP server authentication type is.'
+    . ' <br />The PHPMailer library only supports those types listed.'
+  );
+  $form['auth']['smtp_auth_type'] = array(
+    '#type' => 'select',
+    '#title' => t('Authentication type'),
+    '#default_value' => variable_get('smtp_auth_type', ''),
+    '#options' => $auth_options,
+    '#description' => $description,
+  );
   $form['auth']['smtp_username'] = array(
     '#type' => 'textfield',
     '#title' => t('Username'),
