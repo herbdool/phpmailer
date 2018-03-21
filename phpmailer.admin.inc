@@ -37,7 +37,7 @@ function phpmailer_settings_form($form, $form_state) {
     $form['smtp_on']['#default_value'] = 0;
     $form['smtp_on']['#description'] = t('MimeMail has been detected. To enable PHPMailer for mail transport, go to the <a href="@url">MimeMail settings page</a> and select PHPMailer from the available e-mail engines.', array('@url' => url('admin/config/system/mimemail')));
   }
-  elseif (!variable_get('smtp_on', 0) && empty($form_state['input'])) {
+  elseif (!variable_get('smtp_on', 0) && empty($form_state['values'])) {
     drupal_set_message(t('PHPMailer is currently disabled.'), 'warning');
   }
 
@@ -92,18 +92,16 @@ function phpmailer_settings_form($form, $form_state) {
     'NTLM' => 'NTLM',
     'XOAUTH2' => 'XOAUTH2',
   );
-  $description = t(
-    ' If you do not specify an authentication type for use when authenticating with the server, the PHPMailer library will attempt to guess one, based on the infomration it receives from the server.'
-    . ' If that does not work, and you receive authentication failed notices, try specifying the authentication type.'
-    . ' <br />If you are unsure which type to use, consider the following guidelines:'
-    . ' <ul>'
-    . ' <li>If the connection is NOT using a sucure protocol, try CRAM-MD5 first, then try LOGIN or PLAIN.</li>'
-    . ' <li>If the connection is using a secure protocol, you can try LOGIN or PLAIN first, then CRAM-MD5.</li>'
-    . ' </ul>'
-    . ' (CRAM-MD5 hashes the password before sending, so it is not transmitted in the clear.)'
-    . ' <br />If none of those options work, contact your email hoster to find out what their SMTP server authentication type is.'
-    . ' <br />The PHPMailer library only supports those types listed.'
-  );
+  $description = t('If you do not specify an authentication type for use when authenticating with the server, the PHPMailer library will attempt to guess one based on the infomration it receives from the server.');
+  $description .= ' ' . t('If it does not work and you receive notices about failed authentication, try specifying the authentication type.');
+  $description .= '<br />' . t('If you are unsure which type to use, consider the following guidelines:');
+  $description .= '<ul>';
+  $description .= '<li>' . t('If the connection is NOT using a secure protocol, try CRAM-MD5 first, then try LOGIN or PLAIN.') . '</li>';
+  $description .= '<li>' . t('If the connection is using a secure protocol, you can try LOGIN or PLAIN first, then CRAM-MD5.') . '</li>';
+  $description .= '</ul>';
+  $description .= t('(CRAM-MD5 hashes the password before sending it, so it is not transmitted "in the clear.")');
+  $description .= '<br />' . t('If none of those options work, contact your email hoster to find out what their SMTP server authentication type is.');
+  $description .= '<br />' . t('The PHPMailer library only supports those types listed.');
   $form['auth']['smtp_auth_type'] = array(
     '#type' => 'select',
     '#title' => t('Authentication type'),
@@ -169,11 +167,17 @@ function phpmailer_settings_form($form, $form_state) {
     '#default_value' => variable_get('smtp_encode_headers', 0),
     '#description' => t('If you have subjects and names with accented, etc. characters, check this box to UTF-8 encode them before sending the message.'),
   );
+  $debug_options = array(
+    0 => t('Disabled'),
+    1 => t('Errors only'),
+    2 => t('Server responses'),
+    4 => t('Full communication'),
+  );
   $form['advanced']['smtp_debug'] = array(
     '#type' => 'select',
     '#title' => t('Debug level'),
     '#default_value' => variable_get('smtp_debug', 0),
-    '#options' => array(0 => t('Disabled'), 1 => t('Errors only'), 2 => t('Server responses'), 4 => t('Full communication')),
+    '#options' => $debug_options,
     '#description' => t("Debug the communication with the SMTP server.  You normally shouldn't enable this unless you're trying to debug e-mail sending problems."),
   );
   $form['advanced']['smtp_debug_log'] = array(
@@ -236,17 +240,17 @@ function phpmailer_settings_form($form, $form_state) {
       $result = phpmailer_send($message);
     }
 
-    $notice = 'A test e-mail has been sent to %email. You might still want to !watchdog-url for possible error messages.';
     $replacements = array(
       '%email' => $test_address,
       '!watchdog-url' => l(t('check the logs'), 'admin/reports/dblog'),
     );
+    $notice = t('A test e-mail has been sent to %email. You might still want to !watchdog-url for possible error messages.', $replacements);
     $message_type = 'status';
     if (empty($result) || (is_array($result) && empty($result['result']))) {
-      $notice = 'A test e-mail has NOT been sent to %email. You should !watchdog-url for error messages.';
+      $notice = t('A test e-mail has NOT been sent to %email. You should !watchdog-url for error messages.', $replacements);
       $message_type = 'error';
     }
-    drupal_set_message(t($notice, $replacements), $message_type);
+    drupal_set_message($notice, $message_type);
   }
 
   $form['test'] = array(
@@ -297,7 +301,7 @@ function phpmailer_settings_form_submit($form, &$form_state) {
       watchdog('phpmailer', 'PHPMailer has been enabled.');
     }
   }
-  else if (phpmailer_enabled()) {
+  elseif (phpmailer_enabled()) {
     // Remove PHPMailer from all mail keys it is configured for.
     $mail_system = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
     foreach ($mail_system as $key => $class) {
@@ -326,7 +330,7 @@ function phpmailer_settings_form_submit($form, &$form_state) {
     $settings[] = 'password';
   }
   foreach ($settings as $setting) {
-    if ($form_state['values']['smtp_'. $setting] != variable_get('smtp_'. $setting, '')) {
+    if ($form_state['values']['smtp_' . $setting] != variable_get('smtp_' . $setting, '')) {
       watchdog('phpmailer', 'SMTP configuration changed.');
       break;
     }
@@ -334,7 +338,7 @@ function phpmailer_settings_form_submit($form, &$form_state) {
 }
 
 /**
- * Implementation of hook_mail().
+ * Implements hook_mail().
  */
 function phpmailer_mail($key, &$message, $params) {
   $message['subject'] = t('PHPMailer test e-mail');
@@ -342,7 +346,8 @@ function phpmailer_mail($key, &$message, $params) {
 }
 
 /**
- * Menu callback; Render a HTML mail preview in the browser.
+ * Renders an HTML mail preview in the browser.
+ *
  * @todo Move to Mime Mail project.
  */
 function phpmailer_preview() {
@@ -352,16 +357,11 @@ function phpmailer_preview() {
   $GLOBALS['devel_shutdown'] = TRUE;
 
   $mailkey = 'phpmailer_preview';
-  // Use example address to prevent usage of configurable mail format setting.
-  $recipient = 'test@example.com';
   // @see user_register_submit()
   $language = user_preferred_language($user);
   $variables = user_mail_tokens($user, $language);
   $variables['!password'] = 'test';
-  $subject = _user_mail_text('register_no_approval_required_subject', $language, $variables);
   $body = _user_mail_text('register_no_approval_required_body', $language, $variables);
-  $sender = NULL;
-  $headers = array();
 
   // Convert non-html messages.
   // @see drupal_mail_wrapper()
@@ -370,7 +370,7 @@ function phpmailer_preview() {
   // @see mimemail_prepare()
   $body = theme('mimemail_message', $body, $mailkey);
   foreach (module_implements('mail_post_process') as $module) {
-    $function = $module .'_mail_post_process';
+    $function = $module . '_mail_post_process';
     $function($body, $mailkey);
   }
 
