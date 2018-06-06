@@ -195,7 +195,9 @@ function phpmailer_settings_form($form, $form_state) {
   $form['advanced']['ssl_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Advanced SSL settings'),
-    '#description' => t('If you are attempting to connect to a broken or malconfigured secure mail server, you can try toggling one or more of the following. If that allows the connection, consider fixing the SSL certifcate, as it may be insecure.'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#description' => t('If you are attempting to connect to a broken or malconfigured secure mail server, you can try toggling one or more of these options. <strong>If changing any of these options allows connection to the server, you should consider either fixing the SSL certifcate, or using a different SMTP server, as the connection may be insecure.</strong>'),
   );
   $form['advanced']['ssl_settings']['ssl_verify_peer'] = array(
     '#type' => 'checkbox',
