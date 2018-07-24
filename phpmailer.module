@@ -24,7 +24,7 @@ function phpmailer_menu() {
   $items['admin/config/system/phpmailer'] = array(
     'title' => 'PHPMailer',
     'description' => 'Configure PHPMailer settings.',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => array('phpmailer_settings_form'),
     'access arguments' => array('administer phpmailer settings'),
     'file' => 'phpmailer.admin.inc',
@@ -67,17 +67,13 @@ function phpmailer_form_mimemail_admin_settings_alter(&$form, &$form_state) {
 function phpmailer_enabled() {
   // We need to rely on our 'smtp_on' variable, since PHPMailer may not be
   // configured as the default mail system.
-  return (bool) variable_get('smtp_on', 0);
+  return (bool) config_get('phpmailer.settings', 'smtp_on');
 }
 
 /**
  * Implements hook_mailengine().
  */
 function phpmailer_mailengine($op, $message = array()) {
-  if (!phpmailer_library_exists()) {
-    return;
-  }
-
   switch ($op) {
     case 'list':
       return array(
@@ -174,35 +170,23 @@ function phpmailer_preview_access() {
 }
 
 /**
- * Implements hook_registry_files_alter().
- *
- * @todo Consider to move this into Libraries API.
+ * Implements hook_autoload_info().
  */
-function phpmailer_registry_files_alter(&$files, $modules) {
-  $library_path = libraries_get_path('phpmailer');
-  if (!$library_path) {
-    return;
-  }
-  foreach (array('class.phpmailer.php', 'class.smtp.php') as $filename) {
-    $files[$library_path . '/' . $filename] = array(
-      'module' => 'phpmailer',
-      'weight' => 0,
-    );
-  }
+function phpmailer_autoload_info() {
+  return array(
+    'BackdropPHPMailer' => 'includes/phpmailer.class.inc',
+    'PHPMailer' => 'libraries/phpmailer/class.phpmailer.php',
+    'SMTP' => 'libraries/phpmailer/class.smtp.php',
+  );
 }
 
 /**
- * Verify that PHPMailer libraries exist.
+ * Implements hook_config_info().
  */
-function phpmailer_library_exists() {
-  $library_path = libraries_get_path('phpmailer');
-  if (!$library_path) {
-    return FALSE;
-  }
-  foreach (array('class.phpmailer.php', 'class.smtp.php') as $filename) {
-    if (!file_exists(DRUPAL_ROOT . '/' . $library_path . '/' . $filename)) {
-      return FALSE;
-    }
-  }
-  return TRUE;
+function phpmailer_config_info() {
+  $prefixes['phpmailer.settings'] = array(
+    'label' => t('PHPMailer settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
 }

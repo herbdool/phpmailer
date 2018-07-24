@@ -8,25 +8,14 @@
 /**
  * Class for testing the PHPMailer module.
  */
-class PHPMailerUnitTestCase extends DrupalUnitTestCase {
-
-  /**
-   * Define this test's meta data.
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'E-mail address parser',
-      'description' => 'Validates e-mail address extraction.',
-      'group' => 'PHPMailer',
-    );
-  }
+class PHPMailerUnitTestCase extends BackdropUnitTestCase {
 
   /**
    * {@inheritDoc}
    */
   function setUp() {
     parent::setUp();
-    drupal_load('module', 'phpmailer');
+    backdrop_load('module', 'phpmailer');
   }
 
   /**

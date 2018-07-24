@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Implements the base PHPMailer for Drupal class.
+ * Implements the base PHPMailer for Backdrop class.
  */
 
 /**
- * Class for implementing the PHPMailer library in Drupal.
+ * Class for implementing the PHPMailer library in Backdrop.
  *
  * Includes support for SMTP keep-alive and setting a custom Return-Path.
  */
-class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
+class BackdropPHPMailer extends PHPMailer implements MailSystemInterface {
 
   /**
    * Stores the Return-Path, which may be different from Sender.
@@ -20,23 +20,23 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
   public $ReturnPath = '';
 
   /**
-   * Verbose debug output level configured for Drupal.
+   * Verbose debug output level configured for Backdrop.
    *
    * In order to be able to log error messages with actual error information and
    * see what actually went wrong for a particular message, PHPMailer::SMTPDebug
    * always needs to be enabled.
    *
-   * DrupalPHPMailer::SmtpSend() overrides PHPMailer::SmtpSend() to capture the
+   * BackdropPHPMailer::SmtpSend() overrides PHPMailer::SmtpSend() to capture the
    * debug output string and make it available for watchdog() calls.
    *
    * @var int
    *
    * @see PHPMailer::SMTPDebug
    * @see SMTP::do_debug
-   * @see DrupalPHPMailer::SmtpSend()
-   * @see DrupalPHPMailer::drupalDebugOutput
+   * @see BackdropPHPMailer::SmtpSend()
+   * @see BackdropPHPMailer::backdropDebugOutput
    */
-  public $drupalDebug = 0;
+  public $backdropDebug = 0;
 
   /**
    * Overrides PHPMailer::SMTPDebug to capture SMTP communication errors.
@@ -50,7 +50,7 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
    *
    * @var string
    */
-  public $drupalDebugOutput = '';
+  public $backdropDebugOutput = '';
 
   /**
    * Constructor.
@@ -60,39 +60,40 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     if (method_exists(get_parent_class($this), '__construct')) {
       parent::__construct(TRUE);
     }
+    $config = config('phpmailer.settings');
 
     $this->IsSMTP();
     $this->Reset();
 
-    $this->Host = variable_get('smtp_host', '');
-    if ($backup = variable_get('smtp_hostbackup', '')) {
+    $this->Host = $config->get('smtp_host', '');
+    if ($backup = $config->get('smtp_hostbackup', '')) {
       $this->Host .= ';' . $backup;
     }
-    $this->Port = variable_get('smtp_port', '25');
-    $this->SMTPSecure = variable_get('smtp_protocol', '');
+    $this->Port = $config->get('smtp_port', '25');
+    $this->SMTPSecure = $config->get('smtp_protocol', '');
 
-    $this->SMTPOptions['ssl']['verify_peer'] = variable_get('ssl_verify_peer', 1);
-    $this->SMTPOptions['ssl']['verify_peer_name'] = variable_get('ssl_verify_peer_name', 1);
-    $this->SMTPOptions['ssl']['allow_self_signed'] = variable_get('ssl_allow_self_signed', 0);
+    $this->SMTPOptions['ssl']['verify_peer'] = $config->get('ssl_verify_peer', 1);
+    $this->SMTPOptions['ssl']['verify_peer_name'] = $config->get('ssl_verify_peer_name', 1);
+    $this->SMTPOptions['ssl']['allow_self_signed'] = $config->get('ssl_allow_self_signed', 0);
 
     // Use SMTP authentication if both username and password are given.
-    $this->Username = variable_get('smtp_username', '');
-    $this->Password = variable_get('smtp_password', '');
+    $this->Username = $config->get('smtp_username', '');
+    $this->Password = $config->get('smtp_password', '');
     $this->SMTPAuth = (bool) ($this->Username != '' && $this->Password != '');
-    $auth_type = variable_get('smtp_auth_type', '');
+    $auth_type = $config->get('smtp_auth_type', '');
     if ($this->SMTPAuth && $auth_type) {
       $this->AuthType = $auth_type;
     }
 
-    $this->SMTPKeepAlive = variable_get('smtp_keepalive', 0);
+    $this->SMTPKeepAlive = $config->get('smtp_keepalive', 0);
 
-    $this->drupalDebug = variable_get('smtp_debug', 0);
-    if ($this->drupalDebug > $this->SMTPDebug && user_access('administer phpmailer settings')) {
-      $this->SMTPDebug = $this->drupalDebug;
+    $this->backdropDebug = $config->get('smtp_debug', 0);
+    if ($this->backdropDebug > $this->SMTPDebug && user_access('administer phpmailer settings')) {
+      $this->SMTPDebug = $this->backdropDebug;
     }
 
     // Adjust path to SMTP class.
-    $this->PluginDir = DRUPAL_ROOT . '/' . libraries_get_path('phpmailer') . '/';
+    $this->PluginDir = BACKDROP_ROOT . '/' . backdrop_get_path('module', 'phpmailer') . '/libraries/phpmailer/';
   }
 
   /**
@@ -103,7 +104,7 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
   public function SmtpSend($header, $body) {
     if ($this->SMTPDebug) {
       // Clear possibly previously captured debug output.
-      $this->drupalDebugOutput = '';
+      $this->backdropDebugOutput = '';
       ob_start();
     }
 
@@ -119,10 +120,10 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     }
 
     if ($this->SMTPDebug) {
-      if ($this->drupalDebug && ($this->drupalDebugOutput = ob_get_contents())) {
-        drupal_set_message($this->drupalDebugOutput);
-        if (variable_get('smtp_debug_log', 0)) {
-          watchdog('phpmailer', 'Output of communication with SMTP server:<br /><pre>!output</pre>', array('!output' => print_r($this->drupalDebugOutput, TRUE)), WATCHDOG_DEBUG);
+      if ($this->backdropDebug && ($this->backdropDebugOutput = ob_get_contents())) {
+        backdrop_set_message($this->backdropDebugOutput);
+        if (config_get('phpmailer.settings', 'smtp_debug_log', 0)) {
+          watchdog('phpmailer', 'Output of communication with SMTP server:<br /><pre>!output</pre>', array('!output' => print_r($this->backdropDebugOutput, TRUE)), WATCHDOG_DEBUG);
         }
       }
       ob_end_clean();
@@ -142,21 +143,23 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
    * Initialize or re-initialize properties after sending mail.
    */
   public function Reset() {
+    $config = config('phpmailer.settings');
+
     $this->ClearAllRecipients();
     $this->ClearReplyTos();
     $this->ClearAttachments();
     $this->ClearCustomHeaders();
 
     $this->Priority    = 3;
-    $this->CharSet     = variable_get('smtp_charset', 'utf-8');
+    $this->CharSet     = $config->get('smtp_charset', 'utf-8');
     $this->ContentType = 'text/plain';
     $this->Encoding    = '8bit';
 
     // Set default From name.
-    $from_name = variable_get('smtp_fromname', '');
+    $from_name = $config->get('smtp_fromname', '');
     if ($from_name == '') {
       // Fall back on the site name.
-      $from_name = variable_get('site_name', 'Drupal');
+      $from_name = config_get('system.core', 'site_name');
     }
     $this->FromName   = $from_name;
     $this->Sender     = '';
@@ -189,7 +192,7 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     // Retrieve English defaults to ensure all message keys are set.
     parent::SetLanguage('en');
 
-    // Overload with Drupal translations.
+    // Overload with Backdrop translations.
     $this->language = array(
       'authenticate'        => t('SMTP error: Could not authenticate.'),
       'connect_host'        => t('SMTP error: Could not connect to host.'),
@@ -244,14 +247,14 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
     // Join the body array into one string.
     $message['body'] = implode("\n\n", $message['body']);
     // Convert any HTML to plain-text.
-    $message['body'] = drupal_html_to_text($message['body']);
+    $message['body'] = backdrop_html_to_text($message['body']);
     // Wrap the mail body for sending.
-    $message['body'] = drupal_wrap_mail($message['body']);
+    $message['body'] = backdrop_wrap_mail($message['body']);
     return $message;
   }
 
   /**
-   * Sends an e-mail message composed by drupal_mail().
+   * Sends an e-mail message composed by backdrop_mail().
    *
    * @param array $message
    *   A message array, as described in hook_mail_alter().
@@ -262,6 +265,9 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
    * @see PHPMailer::Send()
    */
   public function mail(array $message) {
+    $config = config('phpmailer.settings');
+    $phpmailer_debug_email = settings_get('phpmailer_debug_email', '');
+    
     try {
       // Parse 'From' e-mail address.
       $from = phpmailer_parse_address($message['from']);
@@ -272,7 +278,7 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
       }
       unset($message['headers']['From']);
 
-      if (variable_get('phpmailer_debug_email', '') === '') {
+      if ($phpmailer_debug_email === '') {
         // Set recipients.
         foreach (phpmailer_parse_address($message['to']) as $address) {
           $this->AddAddress($address['mail'], $address['name']);
@@ -291,7 +297,7 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
       }
       else {
         // Reroute to debug e-mail address.
-        $this->AddAddress(variable_get('phpmailer_debug_email', ''));
+        $this->AddAddress($phpmailer_debug_email);
       }
       unset($message['headers']['Cc'], $message['headers']['Bcc']);
 
@@ -302,7 +308,7 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
         }
         unset($message['headers']['Reply-To']);
       }
-      elseif (variable_get('smtp_always_replyto', FALSE)) {
+      elseif ($config->get('smtp_always_replyto', FALSE)) {
         // If no Reply-To header has been explicitly set, use the From address
         // to be able to respond to e-mails sent via Google Mail.
         $this->AddReplyTo($from['mail'], $from['name']);
@@ -363,26 +369,26 @@ class DrupalPHPMailer extends PHPMailer implements MailSystemInterface {
       // logging modules, we put the actual values on separate lines (\n), so
       // the surrounding HTML markup doesn't get too disturbing.
       //
-      // Message is a safe t() string from DrupalPHPMailer::SetLanguage().
+      // Message is a safe t() string from BackdropPHPMailer::SetLanguage().
       $output = $e->getMessage();
       // Attempt to delimit summary from full message.
       $output .= " \n";
       $arguments = array();
       // Append SMTP communication output.
-      if ($this->drupalDebugOutput) {
+      if ($this->backdropDebugOutput) {
         // PHPMailer debug output contains HTML linebreaks. PRE is more
         // readable.
-        $this->drupalDebugOutput = str_replace('<br />', '', $this->drupalDebugOutput);
+        $this->backdropDebugOutput = str_replace('<br />', '', $this->backdropDebugOutput);
         $output .= '<p><strong>Server response:</strong></p>';
         $output .= "<pre>\n@smtp_output\n</pre>";
         $arguments += array(
-          '@smtp_output' => $this->drupalDebugOutput,
+          '@smtp_output' => $this->backdropDebugOutput,
         );
       }
       // We need to log the message in order to be able to debug why the server
       // responded with an error. The mail body may contain passwords and other
       // sensitive information, which should not be logged. Since all kind of
-      // mails are processed and Drupal provides no way to mark sensible data,
+      // mails are processed and Backdrop provides no way to mark sensible data,
       // it is technically impossible prevent logging in all cases.
       // Remove $params; they've already been processed and may contain sensible
       // data.

@@ -1,0 +1,5 @@
+[PHPMailerUnitTestCase]
+name = E-mail address parser
+description = Validates e-mail address extraction.
+group = PHPMailer
+file = phpmailer.test

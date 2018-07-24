@@ -13,45 +13,37 @@
  * @see phpmailer_settings_form_submit()
  */
 function phpmailer_settings_form($form, $form_state) {
-  // Re-check the requirements, in case a newer version is required since
-  // original installation.
-  module_load_install('phpmailer');
-  $requirements = phpmailer_requirements('runtime');
-  if (!empty($requirements)
-    && isset($requirements['phpmailer']['severity'])
-    && $requirements['phpmailer']['severity'] == REQUIREMENT_ERROR
-    && isset($requirements['phpmailer']['description'])) {
-    drupal_set_message($requirements['phpmailer']['description'], 'error');
-  }
-
+  $config_phpmailer = config('phpmailer.settings');
+  $config_mimemail = config('mimemail.settings');
+  $form['#config'] = 'phpmailer.settings';
   $form['smtp_on'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use PHPMailer to send e-mails'),
-    '#default_value' => variable_get('smtp_on', 0),
+    '#default_value' => $config_phpmailer->get('smtp_on'),
     '#description' => t('When enabled, PHPMailer will be used to deliver all site e-mails.'),
   );
   // Only allow to send all e-mails if Mime Mail is not configured the same
   // (mimemail_alter is the counterpart to smtp_on).
-  if (module_exists('mimemail') && variable_get('mimemail_alter', 0)) {
+  if (module_exists('mimemail') && $config_mimemail->get('mimemail_alter')) {
     $form['smtp_on']['#disabled'] = TRUE;
     $form['smtp_on']['#default_value'] = 0;
     $form['smtp_on']['#description'] = t('MimeMail has been detected. To enable PHPMailer for mail transport, go to the <a href="@url">MimeMail settings page</a> and select PHPMailer from the available e-mail engines.', array('@url' => url('admin/config/system/mimemail')));
   }
-  elseif (!variable_get('smtp_on', 0) && empty($form_state['values'])) {
-    drupal_set_message(t('PHPMailer is currently disabled.'), 'warning');
+  elseif (!$config_phpmailer->get('smtp_on') && empty($form_state['values'])) {
+    backdrop_set_message(t('PHPMailer is currently disabled.'), 'warning');
   }
 
   $form['server']['smtp_host'] = array(
     '#type' => 'textfield',
     '#title' => t('Primary SMTP server'),
-    '#default_value' => variable_get('smtp_host', 'localhost'),
+    '#default_value' => $config_phpmailer->get('smtp_host'),
     '#description' => t('The host name or IP address of your primary SMTP server.  Use !gmail-smtp for Google Mail.', array('!gmail-smtp' => '<code>smtp.gmail.com</code>')),
     '#required' => TRUE,
   );
   $form['server']['smtp_hostbackup'] = array(
     '#type' => 'textfield',
     '#title' => t('Backup SMTP server'),
-    '#default_value' => variable_get('smtp_hostbackup', ''),
+    '#default_value' => $config_phpmailer->get('smtp_hostbackup'),
     '#description' => t('Optional host name or IP address of a backup server, if the primary server fails.  You may override the default port below by appending it to the host name separated by a colon.  Example: !hostname', array('!hostname' => '<code>localhost:465</code>')),
   );
   $form['server']['smtp_port'] = array(
@@ -59,14 +51,14 @@ function phpmailer_settings_form($form, $form_state) {
     '#title' => t('SMTP port'),
     '#size' => 5,
     '#maxlength' => 5,
-    '#default_value' => variable_get('smtp_port', '25'),
+    '#default_value' => $config_phpmailer->get('smtp_port'),
     '#description' => t('The standard SMTP port is 25, for Google Mail use 465.'),
     '#required' => TRUE,
   );
   $form['server']['smtp_protocol'] = array(
     '#type' => 'select',
     '#title' => t('Use secure protocol'),
-    '#default_value' => variable_get('smtp_protocol', ''),
+    '#default_value' => $config_phpmailer->get('smtp_protocol'),
     '#options' => array('' => t('No'), 'ssl' => t('SSL'), 'tls' => t('TLS')),
     '#description' => t('Whether to use an encrypted connection to communicate with the SMTP server.  Google Mail requires SSL.'),
   );
@@ -74,7 +66,7 @@ function phpmailer_settings_form($form, $form_state) {
     $form['server']['smtp_protocol']['#default_value'] = '';
     $form['server']['smtp_protocol']['#disabled'] = TRUE;
     $form['server']['smtp_protocol']['#description'] .= ' ' . t('Note: This option has been disabled since your PHP installation does not seem to have support for OpenSSL.');
-    variable_set('smtp_protocol', '');
+    config_set('phpmailer.settings', 'smtp_protocol', '');
   }
 
   $form['auth'] = array(
@@ -105,21 +97,21 @@ function phpmailer_settings_form($form, $form_state) {
   $form['auth']['smtp_auth_type'] = array(
     '#type' => 'select',
     '#title' => t('Authentication type'),
-    '#default_value' => variable_get('smtp_auth_type', ''),
+    '#default_value' => $config_phpmailer->get('smtp_auth_type'),
     '#options' => $auth_options,
     '#description' => $description,
   );
   $form['auth']['smtp_username'] = array(
     '#type' => 'textfield',
     '#title' => t('Username'),
-    '#default_value' => variable_get('smtp_username', ''),
+    '#default_value' => $config_phpmailer->get('smtp_username'),
     '#description' => t('For Google Mail, enter your username including "@gmail.com".'),
   );
-  if (!variable_get('smtp_hide_password', 0)) {
+  if (!$config_phpmailer->get('smtp_hide_password')) {
     $form['auth']['smtp_password'] = array(
       '#type' => 'textfield',
       '#title' => t('Password'),
-      '#default_value' => variable_get('smtp_password', ''),
+      '#default_value' => $config_phpmailer->get('smtp_password'),
     );
     $form['auth']['smtp_hide_password'] = array(
       '#type' => 'checkbox',
@@ -129,7 +121,7 @@ function phpmailer_settings_form($form, $form_state) {
     );
   }
   else {
-    $have_password = (variable_get('smtp_password', '') != '');
+    $have_password = ($config_phpmailer->get('smtp_password') != '');
     $form['auth']['smtp_password'] = array(
       '#type' => 'password',
       '#title' => $have_password ? t('Change password') : t('Password'),
@@ -146,25 +138,25 @@ function phpmailer_settings_form($form, $form_state) {
   $form['advanced']['smtp_fromname'] = array(
     '#type' => 'textfield',
     '#title' => t('"From" name'),
-    '#default_value' => variable_get('smtp_fromname', ''),
-    '#description' => t('Enter a name that should appear as the sender for all messages.  If left blank the site name will be used instead: %sitename.', array('%sitename' => variable_get('site_name', 'Drupal'))),
+    '#default_value' => $config_phpmailer->get('smtp_fromname'),
+    '#description' => t('Enter a name that should appear as the sender for all messages.  If left blank the site name will be used instead: %sitename.', array('%sitename' => config_get('system.core', 'site_name'))),
   );
   $form['advanced']['smtp_always_replyto'] = array(
     '#type' => 'checkbox',
     '#title' => t('Always set "Reply-To" address'),
-    '#default_value' => variable_get('smtp_always_replyto', 0),
+    '#default_value' => $config_phpmailer->get('smtp_always_replyto'),
     '#description' => t('Enables setting the "Reply-To" address to the original sender of the message, if unset.  This is required when using Google Mail, which would otherwise overwrite the original sender.'),
   );
   $form['advanced']['smtp_keepalive'] = array(
     '#type' => 'checkbox',
     '#title' => t('Keep connection alive'),
-    '#default_value' => variable_get('smtp_keepalive', 0),
+    '#default_value' => $config_phpmailer->get('smtp_keepalive'),
     '#description' => t('Whether to reuse an existing connection during a request.  Improves performance when sending a lot of e-mails at once.'),
   );
   $form['advanced']['smtp_encode_headers'] = array(
     '#type' => 'checkbox',
     '#title' => t('Encode headers'),
-    '#default_value' => variable_get('smtp_encode_headers', 0),
+    '#default_value' => $config_phpmailer->get('smtp_encode_headers'),
     '#description' => t('If you have subjects and names with accented, etc. characters, check this box to UTF-8 encode them before sending the message.'),
   );
   $debug_options = array(
@@ -176,15 +168,15 @@ function phpmailer_settings_form($form, $form_state) {
   $form['advanced']['smtp_debug'] = array(
     '#type' => 'select',
     '#title' => t('Debug level'),
-    '#default_value' => variable_get('smtp_debug', 0),
+    '#default_value' => $config_phpmailer->get('smtp_debug'),
     '#options' => $debug_options,
-    '#description' => t("Debug the communication with the SMTP server.  You normally shouldn't enable this unless you're trying to debug e-mail sending problems."),
+    '#description' => t("Debug the communication with the SMTP server. You normally shouldn't enable this unless you're trying to debug e-mail sending problems."),
   );
   $form['advanced']['smtp_debug_log'] = array(
     '#type' => 'checkbox',
-    '#title' => t("Record debugging output in Drupal's log"),
-    '#default_value' => variable_get('smtp_debug_log', 0),
-    '#description' => t("If this is checked, the debugging out put that is produced will also be recorded in Drupal's database log."),
+    '#title' => t("Record debugging output in Backdrop's log"),
+    '#default_value' => $config_phpmailer->get('smtp_debug_log'),
+    '#description' => t("If this is checked, the debugging out put that is produced will also be recorded in Backdrop's database log."),
     '#states' => array(
       'visible' => array(
         ':input[name=smtp_debug]' => array('!value' => 0),
@@ -202,19 +194,19 @@ function phpmailer_settings_form($form, $form_state) {
   $form['advanced']['ssl_settings']['ssl_verify_peer'] = array(
     '#type' => 'checkbox',
     '#title' => t('Verfy peer'),
-    '#default_value' => variable_get('ssl_verify_peer', 1),
+    '#default_value' => $config_phpmailer->get('ssl_verify_peer'),
     '#description' => t('If this is checked, it will require verification of the SSL certificate being used on the mail server.'),
   );
   $form['advanced']['ssl_settings']['ssl_verify_peer_name'] = array(
     '#type' => 'checkbox',
     '#title' => t('Verfy peer name'),
-    '#default_value' => variable_get('ssl_verify_peer_name', 1),
+    '#default_value' => $config_phpmailer->get('ssl_verify_peer_name'),
     '#description' => t("If this is checked, it will require verification of the mail server's name in the SSL certificate."),
   );
   $form['advanced']['ssl_settings']['ssl_allow_self_signed'] = array(
     '#type' => 'checkbox',
     '#title' => t('Allow self signed'),
-    '#default_value' => variable_get('ssl_allow_self_signed', 0),
+    '#default_value' => $config_phpmailer->get('ssl_allow_self_signed'),
     '#description' => t('If this is checked, it will allow conecting to a mail server with a self-signed SSL certificate. (This requires "Verfy peer" to be enabled.)'),
     '#states' => array(
       'enabled' => array(
@@ -224,21 +216,22 @@ function phpmailer_settings_form($form, $form_state) {
   );
 
   // Send a test email message if an address has been entered.
-  if ($test_address = variable_get('phpmailer_test', '')) {
+  if ($test_address = $config_phpmailer->get('phpmailer_test')) {
     // Delete first to avoid unintended resending in case of an error.
-    variable_del('phpmailer_test');
-    // If PHPMailer is enabled, send via regular drupal_mail().
+    $config_phpmailer->clear('phpmailer_test');
+    $config_phpmailer->save();
+    // If PHPMailer is enabled, send via regular backdrop_mail().
     if (phpmailer_enabled()) {
-      $result = drupal_mail('phpmailer', 'test', $test_address, NULL);
+      $result = backdrop_mail('phpmailer', 'test', $test_address, NULL);
     }
     // Otherwise, prepare and send the test mail manually.
     else {
       // Prepare the message without sending.
-      $message = drupal_mail('phpmailer', 'test', $test_address, NULL, array(), NULL, FALSE);
-      // Send the message. drupal_mail_wrapper() is only defined when PHPMailer
-      // is enabled, so drupal_mail_send() cannot be used.
-      // @see drupal_mail_send()
-      module_load_include('inc', 'phpmailer', 'includes/phpmailer.drupal');
+      $message = backdrop_mail('phpmailer', 'test', $test_address, NULL, array(), NULL, FALSE);
+      // Send the message. backdrop_mail_wrapper() is only defined when PHPMailer
+      // is enabled, so backdrop_mail_send() cannot be used.
+      // @see backdrop_mail_send()
+      module_load_include('inc', 'phpmailer', 'includes/phpmailer.backdrop');
       $result = phpmailer_send($message);
     }
 
@@ -252,7 +245,7 @@ function phpmailer_settings_form($form, $form_state) {
       $notice = t('A test e-mail has NOT been sent to %email. You should !watchdog-url for error messages.', $replacements);
       $message_type = 'error';
     }
-    drupal_set_message($notice, $message_type);
+    backdrop_set_message($notice, $message_type);
   }
 
   $form['test'] = array(
@@ -292,47 +285,49 @@ function phpmailer_settings_form_validate($form, &$form_state) {
  * @see phpmailer_settings_form()
  */
 function phpmailer_settings_form_submit($form, &$form_state) {
+  $config_mail = config('system.mail');
+  $config_phpmailer = config('phpmailer.settings');
   // Enable/disable mail sending subsystem.
   if ($form_state['values']['smtp_on']) {
     if (!phpmailer_enabled()) {
-      $mail_system = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
-      $mail_system['default-system'] = 'DrupalPHPMailer';
-      variable_set('mail_system', $mail_system);
+      $mail_system = $config_mail->get('default-system');
+      $config->set('default-system', 'BackdropPHPMailer');
+      $config->save();
 
-      drupal_set_message(t('PHPMailer will be used to deliver all site e-mails.'));
+      backdrop_set_message(t('PHPMailer will be used to deliver all site e-mails.'));
       watchdog('phpmailer', 'PHPMailer has been enabled.');
     }
   }
   elseif (phpmailer_enabled()) {
     // Remove PHPMailer from all mail keys it is configured for.
-    $mail_system = variable_get('mail_system', array('default-system' => 'DefaultMailSystem'));
+    $mail_system = $config_mail->get('system.mail');
     foreach ($mail_system as $key => $class) {
-      if ($class == 'DrupalPHPMailer') {
+      if ($class == 'BackdropPHPMailer') {
         if ($key != 'default-system') {
-          unset($mail_system[$key]);
+          $config_mail->clear($mail_system[$key]);
         }
         else {
-          $mail_system[$key] = 'DefaultMailSystem';
+          $config_mail->set($mail_system[$key], 'DefaultMailSystem');
         }
       }
     }
-    variable_set('mail_system', $mail_system);
+    $config_mail->save();
 
-    drupal_set_message(t('PHPMailer has been disabled.'));
+    backdrop_set_message(t('PHPMailer has been disabled.'));
     watchdog('phpmailer', 'PHPMailer has been disabled.');
   }
 
   // Log configuration changes.
   $settings = array('host', 'port', 'protocol', 'username');
   // Ignore empty passwords if hide password is active.
-  if (variable_get('smtp_hide_password', 0) && $form_state['values']['smtp_password'] == '') {
+  if ($config_phpmailer->get('smtp_hide_password') && $form_state['values']['smtp_password'] == '') {
     unset($form_state['values']['smtp_password']);
   }
   else {
     $settings[] = 'password';
   }
   foreach ($settings as $setting) {
-    if ($form_state['values']['smtp_' . $setting] != variable_get('smtp_' . $setting, '')) {
+    if ($form_state['values']['smtp_' . $setting] != $config_phpmailer->get('smtp_' . $setting)) {
       watchdog('phpmailer', 'SMTP configuration changed.');
       break;
     }
@@ -366,8 +361,11 @@ function phpmailer_preview() {
   $body = _user_mail_text('register_no_approval_required_body', $language, $variables);
 
   // Convert non-html messages.
-  // @see drupal_mail_wrapper()
-  $format = variable_get('mimemail_format', FILTER_FORMAT_DEFAULT);
+  // @see backdrop_mail_wrapper()
+  $format = FILTER_FORMAT_DEFAULT;
+  if (module_exists('mimemail')) {
+    $format = config_get('mimemail.settings', 'mimemail_format');
+  }
   $body = check_markup($body, $format, FALSE);
   // @see mimemail_prepare()
   $body = theme('mimemail_message', $body, $mailkey);
@@ -377,5 +375,5 @@ function phpmailer_preview() {
   }
 
   print $body;
-  drupal_exit();
+  backdrop_exit();
 }

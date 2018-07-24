@@ -16,11 +16,13 @@
  */
 function mimemail_phpmailer_send(array $message) {
   static $mail;
+  $config = config('phpmailer.settings');
+  $phpmailer_debug_email = settings_get('phpmailer_debug_email', '');
 
   if (!isset($mail)) {
-    $mail = new DrupalPHPMailer();
+    $mail = new BackdropPHPMailer();
     // Keep linefeed style in sync.
-    $mail->LE = variable_get('mimemail_crlf', "\n");
+    $mail->LE = config_get('mimemail.settings', 'mimemail_crlf', "\n");
   }
 
   try {
@@ -33,12 +35,12 @@ function mimemail_phpmailer_send(array $message) {
     $mail->From = $from['mail'];
     if ($from['name'] != '') {
       $mail->FromName = $from['name'];
-      if (variable_get('smtp_encode_headers') && preg_match('/\=\?UTF-8\?B\?.*\?\=/', $from['name']) === 0) {
+      if (config_get('phpmailer.settings', 'smtp_encode_headers') && preg_match('/\=\?UTF-8\?B\?.*\?\=/', $from['name']) === 0) {
         $mail->FromName = mime_header_encode($from['name']);
       }
     }
 
-    if (variable_get('phpmailer_debug_email', '') === '') {
+    if ($phpmailer_debug_email === '') {
       // Set recipients.
       foreach (phpmailer_parse_address($message['to']) as $address) {
         $mail->AddAddress($address['mail']);
@@ -57,7 +59,7 @@ function mimemail_phpmailer_send(array $message) {
     }
     else {
       // Reroute to debug e-mail address.
-      $message['to'] = variable_get('phpmailer_debug_email', '');
+      $message['to'] = $phpmailer_debug_email;
       $mail->AddAddress($message['to']);
     }
     unset($message['headers']['Cc'], $message['headers']['Bcc']);
@@ -70,12 +72,12 @@ function mimemail_phpmailer_send(array $message) {
 
     // If no Reply-To header has been explicitly set, use the From address to be
     // able to respond to e-mails sent via Google Mail.
-    if (!isset($message['headers']['Reply-To']) && variable_get('smtp_always_replyto', FALSE)) {
+    if (!isset($message['headers']['Reply-To']) && config_get('phpmailer.settings', 'smtp_always_replyto')) {
       $message['headers']['Reply-To'] = $from['mail'];
     }
 
     $message['headers']['Subject'] = $message['subject'];
-    if (variable_get('smtp_encode_headers') && preg_match('/\=\?UTF-8\?B\?.*\?\=/', $message['subject']) === 0) {
+    if (config_get('phpmailer.settings', 'smtp_encode_headers') && preg_match('/\=\?UTF-8\?B\?.*\?\=/', $message['subject']) === 0) {
       $message['headers']['Subject'] = mime_header_encode($message['subject']);
     }
 
@@ -90,7 +92,7 @@ function mimemail_phpmailer_send(array $message) {
     return $mail->SmtpSend($header, $message['body']);
   }
   catch (phpmailerException $e) {
-    drupal_set_message(t('Sending of at least one e-mail failed. The error returned was:<br />@error.', array('@error' => $e->getMessage())), 'error');
+    backdrop_set_message(t('Sending of at least one e-mail failed. The error returned was:<br />@error.', array('@error' => $e->getMessage())), 'error');
     watchdog('phpmailer', $e->getMessage(), NULL, WATCHDOG_ERROR);
     return FALSE;
   }

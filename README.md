@@ -1,23 +1,12 @@
-
--- SUMMARY --
+PHPMailer
+=========
 
 Adds SMTP support for sending e-mails using the PHPMailer library.
 
-For a full description of the module, visit the project page:
-  http://drupal.org/project/phpmailer
-To submit bug reports and feature suggestions, or to track changes:
-  http://drupal.org/project/issues/phpmailer
-
-
--- REQUIREMENTS --
+Requirements
+------------
 
 * Access to an SMTP server
-
-* Libraries API module
-  http://drupal.org/project/libraries
-
-* PHPMailer library
-  https://github.com/PHPMailer/PHPMailer
 
 Optional:
 
@@ -25,35 +14,17 @@ Optional:
   OpenSSL support.
 
 * Mime Mail module to send HTML e-mails
-  http://drupal.org/project/mimemail
+  https://backdropcms.org/project/mimemail
 
-* Personalized E-mails module to adjust the displayed sender name
-  http://drupal.org/project/pmail
+Installation
+------------
 
-
--- INSTALLATION --
-
-1. Download the latest PHPMailer library from
-
-     https://github.com/PHPMailer/PHPMailer/tags
-
-   and extract the following files into a 'phpmailer' library directory:
-
-     sites/all/libraries/phpmailer/class.phpmailer.php
-     sites/all/libraries/phpmailer/class.smtp.php
-
-   It is recommended that you create your libraries directory at one of the
-   following locations:
-
-     sites/all/libraries/phpmailer
-     sites/<site>/libraries/phpmailer
-
-   Consult the Libraries API documentation for further information.
-
-2. Install as usual, see http://drupal.org/node/70151 for further information.
+* Install this module using the official Backdrop CMS instructions at
+  https://backdropcms.org/guide/modules
 
 
--- CONFIGURATION --
+Configuration
+-------------
 
 * Configure user permissions at Administer >> User management >> Access
   control >> phpmailer module.
@@ -114,15 +85,29 @@ Optional:
   site.  To enable this feature, add the following lines to the end of your
   settings.php (usually located in sites/default):
 
-    $conf['phpmailer_debug_email'] = 'your_debug_email@yoursite.com';
+    `$settings['phpmailer_debug_email'] = 'your_debug_email@yoursite.com';`
 
   This will change the recipient of all e-mails to the configured address.
 
+Issues
+------
 
--- CREDITS --
+Bugs and Feature requests should be reported in the Issue Queue:
+https://github.com/backdrop-contrib/phpmailer/issues
 
-Authors:
-* Stefan M. Kudwien (smk-ka) - http://drupal.org/user/48898
-* Daniel F. Kudwien (sun) - http://drupal.org/user/54136
+Current Maintainers
+-------------------
 
-This project has been sponsored by UNLEASHED MIND.
+- Seeking maintainers.
+
+Credits
+-------
+
+- Ported to Backdrop by Herb v/d Dool (https://github.com/herbdool/)
+- Authors: Stefan M. Kudwien (smk-ka) - http://drupal.org/user/48898 and Daniel F. Kudwien (sun) - http://drupal.org/user/54136
+
+License
+-------
+
+This project is GPL v2 software. See the LICENSE.txt file in this directory for
+complete text.
