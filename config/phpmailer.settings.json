@@ -4,7 +4,7 @@
     "smtp_charset": "utf-8",
     "smtp_host": "localhost",
     "smtp_hostbackup": "",
-    "smtp_port": "1025",
+    "smtp_port": "25",
     "smtp_protocol": "",
     "smtp_auth_type": "",
     "smtp_username": "",
