@@ -290,9 +290,8 @@ function phpmailer_settings_form_submit($form, &$form_state) {
   // Enable/disable mail sending subsystem.
   if ($form_state['values']['smtp_on']) {
     if (!phpmailer_enabled()) {
-      $mail_system = $config_mail->get('default-system');
-      $config->set('default-system', 'BackdropPHPMailer');
-      $config->save();
+      $config_mail->set('default-system', 'BackdropPHPMailer');
+      $config_mail->save();
 
       backdrop_set_message(t('PHPMailer will be used to deliver all site e-mails.'));
       watchdog('phpmailer', 'PHPMailer has been enabled.');
@@ -300,10 +299,10 @@ function phpmailer_settings_form_submit($form, &$form_state) {
   }
   elseif (phpmailer_enabled()) {
     // Remove PHPMailer from all mail keys it is configured for.
-    $mail_system = $config_mail->get('system.mail');
+    $mail_system = $config_mail->get();
     foreach ($mail_system as $key => $class) {
       if ($class == 'BackdropPHPMailer') {
-        $config_mail->set($mail_system[$key], 'DefaultMailSystem');
+        $config_mail->set($key, 'DefaultMailSystem');
       }
     }
     $config_mail->save();
