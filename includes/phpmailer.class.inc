@@ -65,29 +65,29 @@ class BackdropPHPMailer extends PHPMailer implements MailSystemInterface {
     $this->IsSMTP();
     $this->Reset();
 
-    $this->Host = $config->get('smtp_host', '');
-    if ($backup = $config->get('smtp_hostbackup', '')) {
+    $this->Host = $config->get('smtp_host');
+    if ($backup = $config->get('smtp_hostbackup')) {
       $this->Host .= ';' . $backup;
     }
-    $this->Port = $config->get('smtp_port', '25');
-    $this->SMTPSecure = $config->get('smtp_protocol', '');
+    $this->Port = $config->get('smtp_port');
+    $this->SMTPSecure = $config->get('smtp_protocol');
 
-    $this->SMTPOptions['ssl']['verify_peer'] = $config->get('ssl_verify_peer', 1);
-    $this->SMTPOptions['ssl']['verify_peer_name'] = $config->get('ssl_verify_peer_name', 1);
-    $this->SMTPOptions['ssl']['allow_self_signed'] = $config->get('ssl_allow_self_signed', 0);
+    $this->SMTPOptions['ssl']['verify_peer'] = $config->get('ssl_verify_peer');
+    $this->SMTPOptions['ssl']['verify_peer_name'] = $config->get('ssl_verify_peer_name');
+    $this->SMTPOptions['ssl']['allow_self_signed'] = $config->get('ssl_allow_self_signed');
 
     // Use SMTP authentication if both username and password are given.
-    $this->Username = $config->get('smtp_username', '');
-    $this->Password = $config->get('smtp_password', '');
+    $this->Username = $config->get('smtp_username');
+    $this->Password = $config->get('smtp_password');
     $this->SMTPAuth = (bool) ($this->Username != '' && $this->Password != '');
-    $auth_type = $config->get('smtp_auth_type', '');
+    $auth_type = $config->get('smtp_auth_type');
     if ($this->SMTPAuth && $auth_type) {
       $this->AuthType = $auth_type;
     }
 
-    $this->SMTPKeepAlive = $config->get('smtp_keepalive', 0);
+    $this->SMTPKeepAlive = $config->get('smtp_keepalive');
 
-    $this->backdropDebug = $config->get('smtp_debug', 0);
+    $this->backdropDebug = $config->get('smtp_debug');
     if ($this->backdropDebug > $this->SMTPDebug && user_access('administer phpmailer settings')) {
       $this->SMTPDebug = $this->backdropDebug;
     }
@@ -122,7 +122,7 @@ class BackdropPHPMailer extends PHPMailer implements MailSystemInterface {
     if ($this->SMTPDebug) {
       if ($this->backdropDebug && ($this->backdropDebugOutput = ob_get_contents())) {
         backdrop_set_message($this->backdropDebugOutput);
-        if (config_get('phpmailer.settings', 'smtp_debug_log', 0)) {
+        if (config_get('phpmailer.settings', 'smtp_debug_log')) {
           watchdog('phpmailer', 'Output of communication with SMTP server:<br /><pre>!output</pre>', array('!output' => print_r($this->backdropDebugOutput, TRUE)), WATCHDOG_DEBUG);
         }
       }
@@ -151,12 +151,12 @@ class BackdropPHPMailer extends PHPMailer implements MailSystemInterface {
     $this->ClearCustomHeaders();
 
     $this->Priority    = 3;
-    $this->CharSet     = $config->get('smtp_charset', 'utf-8');
+    $this->CharSet     = $config->get('smtp_charset');
     $this->ContentType = 'text/plain';
     $this->Encoding    = '8bit';
 
     // Set default From name.
-    $from_name = $config->get('smtp_fromname', '');
+    $from_name = $config->get('smtp_fromname');
     if ($from_name == '') {
       // Fall back on the site name.
       $from_name = config_get('system.core', 'site_name');
@@ -308,7 +308,7 @@ class BackdropPHPMailer extends PHPMailer implements MailSystemInterface {
         }
         unset($message['headers']['Reply-To']);
       }
-      elseif ($config->get('smtp_always_replyto', FALSE)) {
+      elseif ($config->get('smtp_always_replyto')) {
         // If no Reply-To header has been explicitly set, use the From address
         // to be able to respond to e-mails sent via Google Mail.
         $this->AddReplyTo($from['mail'], $from['name']);

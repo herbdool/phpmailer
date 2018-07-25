@@ -22,7 +22,7 @@ function mimemail_phpmailer_send(array $message) {
   if (!isset($mail)) {
     $mail = new BackdropPHPMailer();
     // Keep linefeed style in sync.
-    $mail->LE = config_get('mimemail.settings', 'mimemail_crlf', "\n");
+    $mail->LE = config_get('mimemail.settings', 'mimemail_crlf');
   }
 
   try {

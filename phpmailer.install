@@ -29,12 +29,7 @@ function phpmailer_disable() {
     $mail_system = $config->get();
     foreach ($mail_system as $key => $class) {
       if ($class == 'BackdropPHPMailer') {
-        if ($key != 'default-system') {
-          $config->clear($mail_system[$key]);
-        }
-        else {
-          $config->set($mail_system[$key], 'DefaultMailSystem');
-        }
+        $config->set($mail_system[$key], 'DefaultMailSystem');
       }
     }
     $config->save();
@@ -75,6 +70,7 @@ function phpmailer_update_1000() {
   $config->set('phpmailer_debug_email', update_variable_get('phpmailer_debug_email', ''));
   $config->set('smtp_always_replyto', update_variable_get('smtp_always_replyto', 0));
   $config->set('smtp_auth_type', update_variable_get('smtp_auth_type', ''));
+  $config->set('smtp_charset', update_variable_get('smtp_charset', 'utf-8')),
   $config->set('smtp_debug', update_variable_get('smtp_debug', 0));
   $config->set('smtp_debug_log', update_variable_get('smtp_debug_log', 0));
   $config->set('smtp_encode_headers', update_variable_get('smtp_encode_headers', 0));
@@ -97,6 +93,7 @@ function phpmailer_update_1000() {
   update_variable_del('phpmailer_debug_email');
   update_variable_del('smtp_always_replyto');
   update_variable_del('smtp_auth_type');
+  update_variable_del('smtp_charset');
   update_variable_del('smtp_debug');
   update_variable_del('smtp_debug_log');
   update_variable_del('smtp_encode_headers');

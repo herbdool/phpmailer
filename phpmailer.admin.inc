@@ -217,8 +217,8 @@ function phpmailer_settings_form($form, $form_state) {
 
   // Send a test email message if an address has been entered.
   if ($test_address = $config_phpmailer->get('phpmailer_test')) {
-    // Delete first to avoid unintended resending in case of an error.
-    $config_phpmailer->clear('phpmailer_test');
+    // Clear first to avoid unintended resending in case of an error.
+    $config_phpmailer->set('phpmailer_test', '');
     $config_phpmailer->save();
     // If PHPMailer is enabled, send via regular backdrop_mail().
     if (phpmailer_enabled()) {
@@ -303,12 +303,7 @@ function phpmailer_settings_form_submit($form, &$form_state) {
     $mail_system = $config_mail->get('system.mail');
     foreach ($mail_system as $key => $class) {
       if ($class == 'BackdropPHPMailer') {
-        if ($key != 'default-system') {
-          $config_mail->clear($mail_system[$key]);
-        }
-        else {
-          $config_mail->set($mail_system[$key], 'DefaultMailSystem');
-        }
+        $config_mail->set($mail_system[$key], 'DefaultMailSystem');
       }
     }
     $config_mail->save();
