@@ -70,7 +70,7 @@ function phpmailer_update_1000() {
   $config->set('phpmailer_debug_email', update_variable_get('phpmailer_debug_email', ''));
   $config->set('smtp_always_replyto', update_variable_get('smtp_always_replyto', 0));
   $config->set('smtp_auth_type', update_variable_get('smtp_auth_type', ''));
-  $config->set('smtp_charset', update_variable_get('smtp_charset', 'utf-8')),
+  $config->set('smtp_charset', update_variable_get('smtp_charset', 'utf-8'));
   $config->set('smtp_debug', update_variable_get('smtp_debug', 0));
   $config->set('smtp_debug_log', update_variable_get('smtp_debug_log', 0));
   $config->set('smtp_encode_headers', update_variable_get('smtp_encode_headers', 0));
@@ -84,7 +84,7 @@ function phpmailer_update_1000() {
   $config->set('smtp_port', update_variable_get('smtp_port', '25'));
   $config->set('smtp_protocol', update_variable_get('smtp_protocol', ''));
   $config->set('smtp_username', update_variable_get('smtp_username', ''));
-  $config->set('ssl_verify_peer', update_variable_get('ssl_verify_peer',));
+  $config->set('ssl_verify_peer', update_variable_get('ssl_verify_peer', 1));
   $config->set('ssl_verify_peer_name', update_variable_get('ssl_verify_peer_name', 1));
   $config->set('ssl_allow_self_signed', update_variable_get('ssl_allow_self_signed', 0));
   $config->save();
