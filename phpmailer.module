@@ -174,7 +174,7 @@ function phpmailer_preview_access() {
  */
 function phpmailer_autoload_info() {
   return array(
-    'BackdropPHPMailer' => 'includes/phpmailer.class.inc',
+    'BackdropPHPMailer' => 'includes/phpmailer.mail.inc',
     'PHPMailer' => 'libraries/phpmailer/class.phpmailer.php',
     'SMTP' => 'libraries/phpmailer/class.smtp.php',
   );
