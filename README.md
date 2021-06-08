@@ -98,7 +98,8 @@ https://github.com/backdrop-contrib/phpmailer/issues
 Current Maintainers
 -------------------
 
-- Seeking maintainers.
+- [Jason Flatt (oadaeh)](https://github.com/oadaeh)
+- You?
 
 Credits
 -------
